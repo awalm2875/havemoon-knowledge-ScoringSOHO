@@ -1,0 +1,42 @@
+---
+title: "Landed Cost Workbook Method"
+description: "A field-by-field method for building an auditable import cost workbook with quote sources, scenario assumptions, and usable-unit economics."
+date: 2026-07-27
+updatedDate: 2026-07-27
+draft: false
+showHeroImage: false
+sticky: false
+categories: ["Import Tools"]
+tags: ["landed cost", "cost model", "import planning"]
+icon: "database"
+comments: false
+sidebar: { enable: false, toc: true, relatedPosts: false }
+---
+
+Use this method alongside the [browser-based landed-cost calculator](/tools/landed-cost-calculator/). The calculator supports fast scenarios; a workbook should retain source evidence and jurisdiction-specific logic.
+
+## Input register
+
+For every input, record:
+
+- field name and amount;
+- currency and exchange-rate source;
+- quote or authority source;
+- quote date and validity;
+- whether the cost is fixed, per unit, per shipment, or percentage based;
+- tax recoverability;
+- low, base, and high assumptions;
+- responsible reviewer.
+
+## Cost sections
+
+Separate product and packaging, origin charges, main freight, cargo insurance, customs value, tariff classification, duty, import tax, destination charges, brokerage, inland delivery, inspection, financing, expected defects, and receiving costs.
+
+Do not use one combined “shipping” cell. Itemization makes EXW, FOB, and CIF offers comparable and shows which provider owns each assumption.
+
+## Output checks
+
+Calculate cost per ordered unit and cost per expected usable unit. Show recoverable import tax as a cash-flow line rather than silently treating it as a permanent cost. Keep an exceptions sheet for trade remedies, special duties, examination, storage, demurrage, or product-specific fees.
+
+The workbook is a management estimate, not a customs entry. Classification, valuation, origin, duty, and tax treatment should be verified through current authoritative sources or qualified advisers.
+

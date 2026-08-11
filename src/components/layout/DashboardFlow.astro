@@ -1,0 +1,86 @@
+<main class="flow-shell" data-pagefind-body>
+  <div class="flow-grid">
+    <aside class="brand-rail" aria-label="Havemoon knowledge base navigation">
+      <div class="brand-rail-inner">
+        <slot name="profile" />
+        <slot name="navigation" />
+        <slot name="connect" />
+      </div>
+    </aside>
+
+    <section class="knowledge-column" aria-label="Havemoon knowledge base">
+      <slot name="content" />
+    </section>
+  </div>
+</main>
+
+<style>
+  .flow-shell {
+    width: min(100%, 1400px);
+    margin: 0 auto;
+    padding: 96px 0 var(--layout-page-bottom);
+  }
+
+  .flow-grid {
+    display: grid;
+    grid-template-columns: 292px minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+  }
+
+  .brand-rail,
+  .knowledge-column {
+    min-width: 0;
+  }
+
+  .brand-rail-inner {
+    position: sticky;
+    top: 88px;
+    display: grid;
+    gap: 0;
+  }
+
+  @media (min-width: 901px) {
+    .brand-rail :global(.nav-card),
+    .brand-rail :global(.connect-card) {
+      display: none;
+    }
+  }
+
+  @media (min-width: 901px) and (max-width: 1368px) {
+    .flow-shell {
+      width: 100%;
+      padding-inline: 20px;
+    }
+  }
+
+  @media (min-width: 901px) and (max-width: 1120px) {
+    .flow-grid {
+      grid-template-columns: 264px minmax(0, 1fr);
+      gap: 24px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .flow-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .flow-shell {
+      width: min(100%, 780px);
+      padding-inline: 24px;
+    }
+
+    .brand-rail-inner {
+      position: static;
+      gap: 18px;
+    }
+  }
+
+  @media (max-width: 800px) {
+    .flow-shell {
+      padding: 84px 20px 48px;
+    }
+  }
+</style>

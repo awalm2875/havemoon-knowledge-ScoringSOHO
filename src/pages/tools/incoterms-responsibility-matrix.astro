@@ -1,0 +1,233 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const title = 'Incoterms Responsibility Matrix';
+const description =
+  'Compare common Incoterms 2020 rules by delivery point, export clearance, main carriage, insurance, import clearance, and risk transfer.';
+const terms = [
+  {
+    term: 'EXW',
+    mode: 'Any',
+    delivery: 'Goods placed at buyer disposal at named place, not loaded',
+    export: 'Buyer',
+    freight: 'Buyer',
+    insurance: 'Buyer',
+    import: 'Buyer',
+    risk: 'At named delivery place',
+  },
+  {
+    term: 'FCA',
+    mode: 'Any',
+    delivery: 'To buyer-nominated carrier at named place',
+    export: 'Seller',
+    freight: 'Buyer',
+    insurance: 'Buyer',
+    import: 'Buyer',
+    risk: 'At delivery to carrier / named place',
+  },
+  {
+    term: 'FOB',
+    mode: 'Sea / inland waterway',
+    delivery: 'On board vessel at named shipment port',
+    export: 'Seller',
+    freight: 'Buyer',
+    insurance: 'Buyer',
+    import: 'Buyer',
+    risk: 'When on board at shipment port',
+  },
+  {
+    term: 'CFR',
+    mode: 'Sea / inland waterway',
+    delivery: 'On board vessel at shipment port',
+    export: 'Seller',
+    freight: 'Seller',
+    insurance: 'Buyer',
+    import: 'Buyer',
+    risk: 'When on board at shipment port',
+  },
+  {
+    term: 'CIF',
+    mode: 'Sea / inland waterway',
+    delivery: 'On board vessel at shipment port',
+    export: 'Seller',
+    freight: 'Seller',
+    insurance: 'Seller (minimum cover)',
+    import: 'Buyer',
+    risk: 'When on board at shipment port',
+  },
+  {
+    term: 'CPT',
+    mode: 'Any',
+    delivery: 'To seller-contracted carrier',
+    export: 'Seller',
+    freight: 'Seller',
+    insurance: 'Buyer',
+    import: 'Buyer',
+    risk: 'When delivered to carrier',
+  },
+  {
+    term: 'CIP',
+    mode: 'Any',
+    delivery: 'To seller-contracted carrier',
+    export: 'Seller',
+    freight: 'Seller',
+    insurance: 'Seller',
+    import: 'Buyer',
+    risk: 'When delivered to carrier',
+  },
+  {
+    term: 'DAP',
+    mode: 'Any',
+    delivery: 'Ready for unloading at named destination',
+    export: 'Seller',
+    freight: 'Seller',
+    insurance: 'Seller risk decision',
+    import: 'Buyer',
+    risk: 'At named destination before unloading',
+  },
+  {
+    term: 'DPU',
+    mode: 'Any',
+    delivery: 'Unloaded at named destination',
+    export: 'Seller',
+    freight: 'Seller',
+    insurance: 'Seller risk decision',
+    import: 'Buyer',
+    risk: 'After unloading at destination',
+  },
+  {
+    term: 'DDP',
+    mode: 'Any',
+    delivery: 'Import-cleared at named destination, ready for unloading',
+    export: 'Seller',
+    freight: 'Seller',
+    insurance: 'Seller risk decision',
+    import: 'Seller',
+    risk: 'At named destination before unloading',
+  },
+] as const;
+---
+
+<ToolLayout title={title} description={description} label="Shipping reference">
+  <div class="matrix-control tool-field">
+    <label for="term-filter">Highlight a rule</label>
+    <select id="term-filter">
+      <option value="all">Show all rules</option>
+      {terms.map((item) => <option value={item.term}>{item.term}</option>)}
+    </select>
+  </div>
+
+  <div class="matrix-wrap">
+    <table id="incoterms-matrix">
+      <thead
+        ><tr
+          ><th>Rule</th><th>Mode</th><th>Delivery point</th><th>Export</th><th>Main freight</th><th
+            >Insurance</th
+          ><th>Import</th><th>Risk transfer</th></tr
+        ></thead
+      >
+      <tbody
+        >{
+          terms.map((item) => (
+            <tr data-term={item.term}>
+              <>
+                <th>{item.term}</th>
+                <td>{item.mode}</td>
+                <td>{item.delivery}</td>
+                <td>{item.export}</td>
+                <td>{item.freight}</td>
+                <td>{item.insurance}</td>
+                <td>{item.import}</td>
+                <td>{item.risk}</td>
+              </>
+            </tr>
+          ))
+        }</tbody
+      >
+    </table>
+  </div>
+
+  <div class="tool-detail">
+    <h2>Use the named place precisely</h2>
+    <p>
+      Write the rule, exact named place or port, and “Incoterms® 2020” in the quotation and
+      contract. The matrix is a planning summary. Consult the official <a
+        href="https://iccwbo.org/business-solutions/incoterms-rules/">ICC Incoterms rules</a
+      > for the complete obligations.
+    </p>
+    <p>
+      Incoterms rules do not determine product specification, payment timing, title, warranty,
+      customs classification, importer eligibility, or compliance.
+    </p>
+  </div>
+</ToolLayout>
+
+<style>
+  .matrix-control {
+    max-width: 260px;
+    margin-bottom: 14px;
+  }
+  .matrix-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--hm-border);
+  }
+  table {
+    width: 100%;
+    min-width: 1040px;
+    border-collapse: collapse;
+    font-size: 0.76rem;
+  }
+  th,
+  td {
+    padding: 9px 10px;
+    border-right: 1px solid var(--hm-border);
+    border-bottom: 1px solid var(--hm-border);
+    text-align: left;
+    vertical-align: top;
+  }
+  thead th {
+    position: sticky;
+    top: 0;
+    background: var(--hm-muted);
+    color: var(--hm-text);
+  }
+  tbody th {
+    color: var(--hm-link);
+    font: 600 0.78rem var(--hm-font-mono);
+  }
+  tbody td {
+    color: var(--hm-text-secondary);
+  }
+  tbody tr:last-child th,
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  tbody tr.is-muted {
+    opacity: 0.24;
+  }
+  tbody tr.is-selected {
+    background: color-mix(in srgb, var(--hm-link) 9%, var(--hm-page));
+  }
+</style>
+
+<script>
+  function initIncotermsMatrix() {
+    const select = document.querySelector<HTMLSelectElement>('#term-filter');
+    const rows = Array.from(
+      document.querySelectorAll<HTMLTableRowElement>('#incoterms-matrix tbody tr'),
+    );
+    if (!select || select.dataset.ready === 'true') return;
+    select.dataset.ready = 'true';
+    const update = () =>
+      rows.forEach((row) => {
+        const selected = select.value;
+        row.classList.toggle('is-muted', selected !== 'all' && row.dataset.term !== selected);
+        row.classList.toggle('is-selected', selected !== 'all' && row.dataset.term === selected);
+      });
+    select.addEventListener('change', update);
+    update();
+  }
+  initIncotermsMatrix();
+  document.addEventListener('astro:page-load', initIncotermsMatrix);
+</script>

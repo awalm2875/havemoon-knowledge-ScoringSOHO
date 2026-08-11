@@ -1,0 +1,94 @@
+---
+import { getSiteConfig } from '../data/site';
+import { trustLinks } from '../data/knowledge';
+
+const { site } = await getSiteConfig();
+const year = new Date().getFullYear();
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+function withBase(href: string) {
+  return `${basePath}${href}` || '/';
+}
+---
+
+<footer class="site-footer" data-pagefind-ignore>
+  <div class="footer-inner">
+    <div>
+      <strong>Havemoon</strong>
+      <p>{site.footerNote}</p>
+    </div>
+    <nav aria-label="Trust and policy pages">
+      {trustLinks.map((link) => <a href={withBase(link.href)}>{link.label}</a>)}
+      <a href={withBase('/rss.xml')}>RSS</a>
+    </nav>
+    <small>© {year} Havemoon. General educational information, not legal or customs advice.</small>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 24px;
+    border-top: 1px solid var(--hm-border);
+    background: var(--hm-muted);
+  }
+
+  .footer-inner {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) minmax(320px, auto);
+    gap: 24px 48px;
+    width: min(100%, var(--hm-shell));
+    margin: 0 auto;
+    padding: 34px 32px 40px;
+  }
+
+  strong {
+    color: var(--hm-text);
+    font-size: 0.95rem;
+  }
+
+  p,
+  small {
+    color: var(--hm-text-secondary);
+    font-size: 0.8rem;
+  }
+
+  p {
+    max-width: 54ch;
+    margin: 5px 0 0;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px 18px;
+  }
+
+  nav a {
+    color: var(--hm-text-secondary);
+    font-size: 0.8rem;
+    text-decoration: none;
+  }
+
+  nav a:hover {
+    color: var(--hm-link);
+    text-decoration: underline;
+  }
+
+  small {
+    grid-column: 1 / -1;
+    padding-top: 18px;
+    border-top: 1px solid var(--hm-border);
+  }
+
+  @media (max-width: 760px) {
+    .footer-inner {
+      grid-template-columns: 1fr;
+      padding: 28px 20px 34px;
+    }
+
+    nav {
+      justify-content: flex-start;
+    }
+  }
+</style>

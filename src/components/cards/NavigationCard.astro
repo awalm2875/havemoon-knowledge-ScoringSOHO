@@ -1,0 +1,140 @@
+---
+import Icon from '../Icon.astro';
+
+interface NavItem {
+  icon: string;
+  title: string;
+  subtitle: string;
+  href: string;
+}
+
+const { items } = Astro.props as { items: NavItem[] };
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+function withBase(href: string) {
+  if (href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('#')) {
+    return href;
+  }
+
+  if (href === '/') {
+    return `${basePath}/` || '/';
+  }
+
+  return `${basePath}${href.startsWith('/') ? href : `/${href}`}`;
+}
+---
+
+<article class="nav-card">
+  <nav aria-label="Knowledge base sections">
+    {
+      items.map((item) => (
+        <a class="nav-item" href={withBase(item.href)}>
+          <span class="nav-icon">
+            <Icon name={item.icon} />
+          </span>
+          <span>
+            <strong>{item.title}</strong>
+            <small>{item.subtitle}</small>
+          </span>
+          <span class="nav-arrow" aria-hidden="true">
+            ›
+          </span>
+        </a>
+      ))
+    }
+  </nav>
+</article>
+
+<style>
+  .nav-card {
+    width: 100%;
+  }
+
+  nav {
+    display: grid;
+    width: 100%;
+    border-top: 1px solid var(--hm-border);
+  }
+
+  .nav-item {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr) 12px;
+    gap: 10px;
+    align-items: center;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--hm-border);
+    background: transparent;
+    color: var(--paper-ink);
+    text-decoration: none;
+  }
+
+  .nav-item:hover {
+    background: transparent;
+    color: var(--paper-accent);
+  }
+
+  .nav-icon,
+  .nav-arrow {
+    color: var(--paper-accent);
+  }
+
+  .nav-icon svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .nav-arrow {
+    font-size: 1.1rem;
+  }
+
+  strong,
+  small {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  strong {
+    font-size: 0.9rem;
+    font-weight: 650;
+  }
+
+  small {
+    margin-top: 2px;
+    color: var(--paper-ink-soft);
+    font-size: 0.75rem;
+  }
+
+  @media (max-width: 580px) {
+    nav {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border-top: 0;
+      gap: 0 18px;
+    }
+
+    .nav-item {
+      width: 100%;
+      grid-template-columns: 24px minmax(0, 1fr);
+      gap: 10px;
+      justify-content: start;
+      min-width: 0;
+      padding: 10px 0;
+    }
+
+    .nav-icon {
+      display: grid;
+      place-items: center;
+    }
+
+    strong {
+      max-width: 100%;
+      text-align: left;
+    }
+
+    small,
+    .nav-arrow {
+      display: none;
+    }
+  }
+</style>

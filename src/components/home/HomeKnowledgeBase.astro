@@ -1,0 +1,1091 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import {
+  BookOpenCheck,
+  Boxes,
+  Calculator,
+  CheckCircle2,
+  ClipboardCheck,
+  Compass,
+  Copy,
+  Factory,
+  FileCheck2,
+  PackageSearch,
+  Scale,
+  ShieldCheck,
+  Ship,
+  Truck,
+  Wrench,
+} from 'lucide-astro';
+import FormattedDate from '../FormattedDate.astro';
+import BlogHeatmap from '../widgets/BlogHeatmap.astro';
+import { knowledgeCategories, practicalTools } from '../../data/knowledge';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+  resources: CollectionEntry<'projects'>[];
+  heatmapWeeks?: number;
+}
+
+const { posts, resources, heatmapWeeks = 26 } = Astro.props;
+const latest = posts.slice(0, 4);
+const displayedResources = resources.slice(0, 4);
+
+const categoryIcons = [
+  Compass,
+  ShieldCheck,
+  ClipboardCheck,
+  Factory,
+  Truck,
+  FileCheck2,
+  PackageSearch,
+];
+const categoryTones = ['blue', 'green', 'gold', 'indigo', 'cyan', 'rose', 'slate'];
+
+const categoryCoverage = knowledgeCategories.map((category, index) => ({
+  ...category,
+  count: posts.filter((post) => post.data.categories.includes(category.label)).length,
+  icon: categoryIcons[index],
+  tone: categoryTones[index],
+}));
+
+function postHref(id: string) {
+  return `/blog/${id}/`;
+}
+
+function resourceHref(id: string) {
+  return `/resources/${id}/`;
+}
+---
+
+<article class="readme-panel">
+  <p class="readme-path"><a href="/">havemoon</a> / README.md</p>
+
+  <header class="readme-intro">
+    <h1
+      aria-label="Practical guidance for sourcing and manufacturing in China"
+      data-typing-line
+      data-typing-speed="48"
+    >
+      <span
+        class="typing-reserve"
+        data-typing-reserve="Practical guidance for sourcing and manufacturing in China"
+        aria-hidden="true"></span>
+      <span class="typing-live" aria-hidden="true">
+        <span data-typing-output>Practical guidance for sourcing and manufacturing in China</span>
+        <span class="typing-caret"></span>
+      </span>
+    </h1>
+    <p
+      class="readme-subtitle"
+      aria-label="Independent guides for overseas buyers and importers"
+      data-typing-line
+      data-typing-speed="52"
+    >
+      <span
+        class="typing-reserve"
+        data-typing-reserve="Independent guides for overseas buyers and importers"
+        aria-hidden="true"></span>
+      <span class="typing-live" aria-hidden="true">
+        <span data-typing-output>Independent guides for overseas buyers and importers</span>
+        <span class="typing-caret"></span>
+      </span>
+    </p>
+    <p class="readme-summary">
+      Research-backed guidance on suppliers, production, quality, compliance, and shipping.
+    </p>
+    <div class="metadata-line" aria-label="Publication information">
+      <span>Independent</span>
+      <span>English</span>
+      <span>Updated Aug 2026</span>
+    </div>
+    <nav class="readme-actions" aria-label="Knowledge base shortcuts">
+      <a class="action-dark" href="/blog/"><BookOpenCheck size={15} /> GUIDES</a>
+      <a class="action-blue" href="/tools/"><Calculator size={15} /> BUYER TOOLS</a>
+      <a class="action-gray" href="/resources/"><Boxes size={15} /> RESOURCES</a>
+      <a class="action-slate" href="/rss.xml"><span aria-hidden="true">RSS</span> UPDATES</a>
+    </nav>
+  </header>
+
+  <section class="focus-workbench" aria-label="Havemoon current focus">
+    <div class="focus-copy">
+      <button class="copy-focus" type="button" aria-label="Copy editorial focus" data-copy-focus>
+        <Copy size={18} stroke-width={1.8} />
+      </button>
+      <div class="focus-code" data-focus-text>
+        <p><strong>$ current_focus</strong></p>
+        <p>- Supplier verification and commercial due diligence</p>
+        <p>- Production planning and quality-control workflows</p>
+        <p>- Freight, landed cost, and Incoterms</p>
+        <p>- Product compliance research</p>
+        <p class="code-gap"><strong>$ editorial_standard</strong></p>
+        <p>Primary sources where rules apply. No paid supplier rankings.</p>
+      </div>
+    </div>
+    <div class="focus-brand" aria-hidden="true">
+      <img
+        src="/images/brand/havemoon-mark-transparent-blue.png"
+        width="2040"
+        height="717"
+        alt=""
+      />
+    </div>
+  </section>
+
+  <section class="activity-section" aria-labelledby="activity-heading">
+    <div class="lower-heading activity-heading">
+      <h2 id="activity-heading">Publication activity</h2>
+      <a href="/activity/">Full activity</a>
+    </div>
+    <BlogHeatmap
+      weeks={heatmapWeeks}
+      showLatest={false}
+      excludeDraft={true}
+      latestCount={1}
+      compact={true}
+    />
+  </section>
+
+  <div class="inventory-badges" aria-label="Published inventory">
+    <span><strong>{posts.length}</strong> original guides</span>
+    <span><strong>{resources.length}</strong> buyer resources</span>
+    <span><strong>{practicalTools.length}</strong> browser tools</span>
+  </div>
+
+  <section class="knowledge-board" aria-label="Havemoon knowledge index">
+    <div class="board-heading">
+      <h2>Buyer Knowledge Index</h2>
+      <h2>Latest Guides &amp; Tools</h2>
+    </div>
+
+    <div class="board-columns">
+      <div class="coverage-column">
+        <section class="dark-panel coverage-panel" aria-labelledby="coverage-title">
+          <div class="dark-panel-heading">
+            <div>
+              <span>HAVEMOON</span>
+              <h3 id="coverage-title">Knowledge coverage</h3>
+            </div>
+            <CheckCircle2 size={34} stroke-width={1.6} />
+          </div>
+          <ul>
+            {
+              categoryCoverage.slice(0, 5).map((category) => (
+                <li>
+                  <a href={`/blog/categories/${category.slug}/`}>{category.label}</a>
+                  <span>
+                    {category.count} {category.count === 1 ? 'guide' : 'guides'}
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+
+        <section class="dark-panel inventory-panel" aria-label="Publication inventory">
+          <div><strong>{posts.length}</strong><span>Buyer guides</span></div>
+          <div><strong>{resources.length}</strong><span>Resources</span></div>
+          <div><strong>{practicalTools.length}</strong><span>Tools</span></div>
+        </section>
+      </div>
+
+      <div class="latest-column">
+        <div class="topic-grid" aria-label="Knowledge categories">
+          {
+            categoryCoverage.map(({ label, slug, icon: CategoryIcon, tone, count }) => (
+              <a class:list={['topic-tile', tone]} href={`/blog/categories/${slug}/`}>
+                <CategoryIcon size={25} stroke-width={1.8} />
+                <strong>{label}</strong>
+                <span>
+                  {count} {count === 1 ? 'guide' : 'guides'}
+                </span>
+              </a>
+            ))
+          }
+        </div>
+
+        <div class="latest-list">
+          {
+            latest.slice(0, 3).map((post) => (
+              <a href={postHref(post.id)}>
+                <span>
+                  <strong>{post.data.title}</strong>
+                  <small>{post.data.categories[0] ?? 'Buyer guide'}</small>
+                </span>
+                <FormattedDate date={post.data.date} />
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="readme-lower" aria-label="Resources and publication activity">
+    <div class="lower-column">
+      <div class="lower-heading">
+        <h2>Buyer resources</h2>
+        <a href="/resources/">View all</a>
+      </div>
+      <div class="resource-list">
+        {
+          displayedResources.map((resource) => (
+            <a href={resourceHref(resource.id)}>
+              <span>
+                <strong>{resource.data.title}</strong>
+                <small>{resource.data.categories[0] ?? 'Buyer resource'}</small>
+              </span>
+              <span aria-hidden="true">›</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="lower-column">
+      <div class="lower-heading">
+        <h2>Practical tools</h2>
+        <a href="/tools/">View all</a>
+      </div>
+      <div class="resource-list">
+        {
+          practicalTools.map((tool) => (
+            <a href={tool.href}>
+              <span>
+                <strong>{tool.title}</strong>
+                <small>{tool.status}</small>
+              </span>
+              <span aria-hidden="true">›</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</article>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('[data-copy-focus]');
+  const focusText = document.querySelector<HTMLElement>('[data-focus-text]');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const waitForTypingFrame = (duration: number) =>
+    new Promise<void>((resolve) => window.setTimeout(resolve, duration));
+
+  const runTypingLine = async (line: HTMLElement) => {
+    if (line.dataset.typingReady === 'true') return;
+
+    const output = line.querySelector<HTMLElement>('[data-typing-output]');
+    const text = line.getAttribute('aria-label')?.trim() ?? '';
+
+    if (!output || !text) return;
+
+    line.dataset.typingReady = 'true';
+
+    if (reduceMotion) {
+      output.textContent = text;
+      line.dataset.typingState = 'static';
+      return;
+    }
+
+    const typeSpeed = Number(line.dataset.typingSpeed) || 50;
+    const deleteSpeed = 22;
+
+    await waitForTypingFrame(260);
+
+    while (line.isConnected) {
+      line.dataset.typingState = 'typing';
+      output.textContent = '';
+
+      for (let index = 1; index <= text.length; index += 1) {
+        if (!line.isConnected) return;
+        output.textContent = text.slice(0, index);
+        await waitForTypingFrame(typeSpeed);
+      }
+
+      line.dataset.typingState = 'holding';
+      await waitForTypingFrame(1200);
+      line.dataset.typingState = 'deleting';
+
+      for (let index = text.length - 1; index >= 0; index -= 1) {
+        if (!line.isConnected) return;
+        output.textContent = text.slice(0, index);
+        await waitForTypingFrame(deleteSpeed);
+      }
+
+      line.dataset.typingState = 'waiting';
+      await waitForTypingFrame(520);
+    }
+  };
+
+  const initializeTypingLines = () => {
+    document
+      .querySelectorAll<HTMLElement>('[data-typing-line]')
+      .forEach((line) => void runTypingLine(line));
+  };
+
+  initializeTypingLines();
+  document.addEventListener('astro:page-load', initializeTypingLines);
+
+  const legacyCopy = (text: string) => {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.append(textarea);
+    textarea.select();
+    const copied = document.execCommand('copy');
+    textarea.remove();
+    return copied;
+  };
+
+  button?.addEventListener('click', async () => {
+    if (!focusText) return;
+
+    const value = focusText.innerText.trim();
+    button.setAttribute('aria-label', 'Copying editorial focus');
+
+    let copied = false;
+
+    try {
+      await Promise.race([
+        navigator.clipboard.writeText(value),
+        new Promise((_, reject) => window.setTimeout(() => reject(new Error('timeout')), 500)),
+      ]);
+      copied = true;
+    } catch {
+      copied = legacyCopy(value);
+    }
+
+    if (copied) {
+      button.dataset.copied = 'true';
+      button.setAttribute('aria-label', 'Copied');
+    } else {
+      button.setAttribute('aria-label', 'Copy failed');
+    }
+
+    window.setTimeout(() => {
+      delete button.dataset.copied;
+      button.setAttribute('aria-label', 'Copy editorial focus');
+    }, 1200);
+  });
+</script>
+
+<style>
+  .readme-panel {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--hm-border);
+    border-radius: 6px;
+    background: var(--hm-page);
+  }
+
+  .readme-path {
+    margin: 0;
+    padding: 24px 32px 0;
+    color: var(--hm-text-secondary);
+    font: 0.78rem/1.4 var(--hm-font-mono);
+  }
+
+  .readme-path a {
+    color: var(--hm-text);
+    text-decoration: none;
+  }
+
+  .readme-intro {
+    padding: 28px 32px 22px;
+    text-align: center;
+  }
+
+  .readme-intro h1 {
+    position: relative;
+    display: grid;
+    width: fit-content;
+    max-width: 780px;
+    margin: 0 auto;
+    color: #315f9d;
+    font: 700 clamp(1.38rem, 2vw, 1.72rem) / 1.3 var(--hm-font-mono);
+    letter-spacing: -0.025em;
+  }
+
+  .typing-reserve,
+  .typing-live {
+    grid-area: 1 / 1;
+  }
+
+  .typing-reserve::before {
+    visibility: hidden;
+    content: attr(data-typing-reserve);
+  }
+
+  .typing-live {
+    width: 100%;
+  }
+
+  .typing-caret {
+    display: inline-block;
+    width: 2px;
+    height: 0.86em;
+    margin-left: 7px;
+    background: currentColor;
+    vertical-align: -0.08em;
+    animation: typing-caret 760ms steps(1, end) infinite;
+  }
+
+  .readme-subtitle {
+    margin: 14px 0 0;
+    color: #315f9d;
+    font: 650 clamp(0.93rem, 1.4vw, 1.06rem) / 1.4 var(--hm-font-mono);
+    display: grid;
+  }
+
+  .readme-summary {
+    margin: 14px 0 0;
+    color: var(--hm-text);
+    font-size: 0.93rem;
+    font-weight: 600;
+  }
+
+  .metadata-line {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 14px;
+  }
+
+  .metadata-line span {
+    padding: 3px 9px;
+    border-radius: 12px;
+    background: var(--hm-muted);
+    color: var(--hm-text-secondary);
+    font: 0.72rem/1.35 var(--hm-font-mono);
+  }
+
+  .readme-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 14px;
+  }
+
+  .readme-actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 0 14px;
+    color: #fff;
+    font: 700 0.72rem/1 var(--hm-font-mono);
+    letter-spacing: 0.06em;
+    text-decoration: none;
+  }
+
+  .action-dark {
+    background: #24292f;
+  }
+  .action-blue {
+    background: #2f81f7;
+  }
+  .action-gray {
+    background: #57606a;
+  }
+  .action-slate {
+    background: #315f9d;
+  }
+
+  .focus-workbench {
+    display: grid;
+    grid-template-columns: minmax(0, 2.45fr) minmax(170px, 0.72fr);
+    gap: 18px;
+    padding: 0 32px 18px;
+  }
+
+  .focus-copy {
+    position: relative;
+    min-width: 0;
+    padding: 22px 54px 20px 20px;
+    border-radius: 6px;
+    background: var(--hm-muted);
+  }
+
+  .focus-code {
+    color: var(--hm-text-secondary);
+    font: 0.8rem/1.55 var(--hm-font-mono);
+  }
+
+  .focus-code p {
+    margin: 0;
+  }
+
+  .focus-code strong {
+    color: var(--hm-text);
+    font-weight: 500;
+  }
+
+  .focus-code .code-gap {
+    margin-top: 18px;
+  }
+
+  .copy-focus {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid var(--hm-border);
+    border-radius: 6px;
+    background: var(--hm-page);
+    color: var(--hm-text-secondary);
+    cursor: pointer;
+  }
+
+  .copy-focus[data-copied='true'] {
+    border-color: var(--hm-success);
+    color: var(--hm-success);
+  }
+
+  .focus-brand {
+    display: grid;
+    place-items: center;
+    min-height: 194px;
+    background: var(--hm-page);
+  }
+
+  .focus-brand img {
+    width: 88%;
+    height: auto;
+  }
+
+  .inventory-badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 32px 18px;
+  }
+
+  .inventory-badges span {
+    padding: 3px 8px;
+    border: 1px solid var(--hm-border);
+    background: var(--hm-muted);
+    color: var(--hm-text-secondary);
+    font: 0.71rem/1.3 var(--hm-font-mono);
+  }
+
+  .inventory-badges strong {
+    color: var(--hm-link);
+  }
+
+  .knowledge-board {
+    margin: 0 32px;
+    border: 1px solid var(--hm-border);
+  }
+
+  .board-heading,
+  .board-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  }
+
+  .board-heading {
+    border-bottom: 1px solid var(--hm-border);
+  }
+
+  .board-heading h2 {
+    margin: 0;
+    padding: 9px 14px;
+    font-size: 0.91rem;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .board-heading h2 + h2,
+  .latest-column {
+    border-left: 1px solid var(--hm-border);
+  }
+
+  .coverage-column,
+  .latest-column {
+    min-width: 0;
+    padding: 10px;
+  }
+
+  .coverage-column {
+    display: grid;
+    gap: 2px;
+  }
+
+  .dark-panel {
+    border: 1px solid #30363d;
+    background: #0d1117;
+    color: #c9d1d9;
+  }
+
+  .dark-panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 16px 18px 12px;
+    color: #6ea8fe;
+  }
+
+  .dark-panel-heading span {
+    color: #8c959f;
+    font: 0.65rem/1.2 var(--hm-font-mono);
+    letter-spacing: 0.08em;
+  }
+
+  .dark-panel-heading h3 {
+    margin: 4px 0 0;
+    color: #e6edf3;
+    font-size: 0.92rem;
+  }
+
+  .coverage-panel ul {
+    display: grid;
+    gap: 7px;
+    margin: 0;
+    padding: 0 18px 17px;
+    list-style: none;
+  }
+
+  .coverage-panel li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.74rem;
+  }
+
+  .coverage-panel a {
+    color: #7ee787;
+    text-decoration: none;
+  }
+
+  .coverage-panel li span {
+    color: #8c959f;
+  }
+
+  .inventory-panel {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .inventory-panel div {
+    display: grid;
+    gap: 4px;
+    place-items: center;
+    min-width: 0;
+    padding: 17px 8px;
+  }
+
+  .inventory-panel div + div {
+    border-left: 1px solid #30363d;
+  }
+
+  .inventory-panel strong {
+    color: #6ea8fe;
+    font-size: 1.32rem;
+    line-height: 1;
+  }
+
+  .inventory-panel span {
+    color: #8c959f;
+    font-size: 0.67rem;
+    text-align: center;
+  }
+
+  .latest-column {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+  }
+
+  .topic-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .topic-tile {
+    --tile-color: #0969da;
+    display: grid;
+    gap: 4px;
+    place-items: center;
+    min-width: 0;
+    min-height: 84px;
+    padding: 9px 5px;
+    border: 1px solid #30363d;
+    border-radius: 4px;
+    background: #0d1117;
+    color: var(--tile-color);
+    text-decoration: none;
+    text-align: center;
+  }
+
+  .topic-tile strong {
+    overflow: hidden;
+    width: 100%;
+    color: #e6edf3;
+    font-size: 0.62rem;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .topic-tile span {
+    color: #8c959f;
+    font-size: 0.58rem;
+  }
+
+  .topic-tile.green {
+    --tile-color: #3fb950;
+  }
+  .topic-tile.gold {
+    --tile-color: #d29922;
+  }
+  .topic-tile.indigo {
+    --tile-color: #a371f7;
+  }
+  .topic-tile.cyan {
+    --tile-color: #39c5cf;
+  }
+  .topic-tile.rose {
+    --tile-color: #db61a2;
+  }
+  .topic-tile.slate {
+    --tile-color: #8c959f;
+  }
+
+  .latest-list {
+    border-top: 1px solid var(--hm-border);
+  }
+
+  .latest-list > a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) max-content;
+    gap: 12px;
+    align-items: center;
+    padding: 9px 2px;
+    border-bottom: 1px solid var(--hm-border);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .latest-list strong,
+  .latest-list small {
+    display: block;
+  }
+
+  .latest-list strong {
+    overflow: hidden;
+    color: var(--hm-link);
+    font-size: 0.72rem;
+    line-height: 1.3;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .latest-list small,
+  .latest-list time {
+    color: var(--hm-text-faint);
+    font-size: 0.62rem;
+  }
+
+  .readme-lower {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px;
+    margin: 30px;
+  }
+
+  .lower-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 9px;
+  }
+
+  .lower-heading h2 {
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .lower-heading a {
+    font-size: 0.75rem;
+    text-decoration: none;
+  }
+
+  .resource-list {
+    border-top: 1px solid var(--hm-border);
+  }
+
+  .resource-list > a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--hm-border);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .resource-list strong,
+  .resource-list small {
+    display: block;
+  }
+
+  .resource-list strong {
+    color: var(--hm-link);
+    font-size: 0.75rem;
+    line-height: 1.3;
+  }
+
+  .resource-list small {
+    margin-top: 2px;
+    color: var(--hm-text-faint);
+    font-size: 0.65rem;
+  }
+
+  .activity-section {
+    margin: 0 32px 14px;
+    padding: 16px 0 14px;
+    border-top: 1px solid var(--hm-border);
+    border-bottom: 1px solid var(--hm-border);
+    animation: activity-enter 620ms 160ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .activity-heading {
+    margin-bottom: 12px;
+  }
+
+  .activity-section :global(.heatmap-card) {
+    padding: 0;
+  }
+
+  @keyframes typing-caret {
+    0%,
+    48% {
+      opacity: 1;
+    }
+    49%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes activity-enter {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (min-width: 901px) {
+    .readme-path {
+      padding: 28px 36px 0;
+    }
+
+    .readme-intro {
+      padding: 36px 36px 30px;
+    }
+
+    .readme-subtitle,
+    .readme-summary {
+      margin-top: 16px;
+    }
+
+    .metadata-line,
+    .readme-actions {
+      margin-top: 16px;
+    }
+
+    .focus-workbench {
+      gap: 22px;
+      padding: 0 36px 26px;
+    }
+
+    .inventory-badges {
+      padding: 0 36px 24px;
+    }
+
+    .knowledge-board {
+      margin-inline: 36px;
+    }
+
+    .readme-lower {
+      gap: 32px;
+      margin: 38px 36px;
+    }
+
+    .activity-section {
+      margin: 0 36px 20px;
+      padding: 22px 0 20px;
+    }
+  }
+
+  @media (max-width: 1180px) {
+    .topic-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .focus-workbench {
+      grid-template-columns: minmax(0, 1fr) 170px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .readme-panel {
+      border: 0;
+      border-radius: 0;
+      overflow: visible;
+    }
+
+    .readme-path {
+      padding: 0;
+    }
+
+    .readme-intro {
+      padding: 28px 0 22px;
+      text-align: left;
+    }
+
+    .readme-intro h1 {
+      font-family: var(--hm-font-sans);
+      width: 100%;
+      max-width: 620px;
+      margin-inline: auto;
+      font-size: 1.9rem;
+      line-height: 1.15;
+      text-align: center;
+    }
+
+    .readme-subtitle {
+      width: 100%;
+      max-width: 620px;
+      margin: 12px auto 0;
+      font-family: var(--hm-font-sans);
+      font-size: 1.03rem;
+      text-align: center;
+    }
+
+    .readme-summary {
+      margin-top: 12px;
+      color: var(--hm-text-secondary);
+      font-weight: 400;
+    }
+
+    .metadata-line,
+    .readme-actions {
+      justify-content: flex-start;
+    }
+
+    .focus-workbench {
+      grid-template-columns: 1fr;
+      padding: 0 0 20px;
+    }
+
+    .focus-brand {
+      display: none;
+    }
+
+    .inventory-badges {
+      justify-content: flex-start;
+      padding-inline: 0;
+    }
+
+    .knowledge-board {
+      margin-inline: 0;
+    }
+
+    .readme-lower {
+      margin-inline: 0;
+    }
+
+    .activity-section {
+      display: none;
+      margin-inline: 0;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .readme-intro h1 {
+      font-size: 1.62rem;
+    }
+
+    .readme-actions a {
+      padding-inline: 10px;
+      font-size: 0.66rem;
+    }
+
+    .board-heading {
+      display: none;
+    }
+
+    .board-columns,
+    .readme-lower {
+      grid-template-columns: 1fr;
+    }
+
+    .latest-column {
+      border-top: 1px solid var(--hm-border);
+      border-left: 0;
+    }
+
+    .readme-lower {
+      gap: 28px;
+    }
+
+    .topic-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 420px) {
+    .readme-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      width: 100%;
+    }
+
+    .readme-actions a {
+      justify-content: center;
+    }
+
+    .focus-copy {
+      padding: 18px 46px 18px 16px;
+    }
+
+    .focus-code {
+      font-size: 0.72rem;
+    }
+
+    .inventory-badges {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .activity-section,
+    .typing-caret {
+      animation: none;
+    }
+
+    .typing-caret {
+      display: none;
+    }
+  }
+</style>

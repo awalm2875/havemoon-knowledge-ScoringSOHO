@@ -1,0 +1,104 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { knowledgeCategories, practicalTools } from '../../data/knowledge';
+
+interface Props {
+  posts?: CollectionEntry<'blog'>[];
+  title?: string;
+}
+
+const { posts = [], title = 'Knowledge base' } = Astro.props;
+const pathname = Astro.url.pathname;
+
+function isActive(href: string) {
+  return pathname === href || (href !== '/blog/' && pathname.startsWith(href));
+}
+---
+
+<nav class="knowledge-sidebar" aria-label="Knowledge base directory">
+  <a class="sidebar-root" href="/blog/">{title}</a>
+
+  <div class="sidebar-group">
+    <span>Guide categories</span>
+    {
+      knowledgeCategories.map((category) => {
+        const href = `/blog/categories/${category.slug}/`;
+        const count = posts.filter((post) => post.data.categories.includes(category.label)).length;
+        return (
+          <a class:list={{ active: isActive(href) }} href={href}>
+            <span>{category.label}</span>
+            {posts.length > 0 && <small>{count}</small>}
+          </a>
+        );
+      })
+    }
+  </div>
+
+  <div class="sidebar-group">
+    <span>Buyer tools</span>
+    {practicalTools.map((tool) => <a href={tool.href}>{tool.title}</a>)}
+  </div>
+
+  <div class="sidebar-group secondary">
+    <span>Site information</span>
+    <a href="/about/">About Havemoon</a>
+    <a href="/editorial-policy/">Editorial policy</a>
+    <a href="/corrections/">Corrections</a>
+  </div>
+</nav>
+
+<style>
+  .knowledge-sidebar {
+    display: grid;
+    align-content: start;
+    min-width: 0;
+    font-size: 0.82rem;
+  }
+  .sidebar-root {
+    margin-bottom: 14px;
+    color: var(--hm-text);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .sidebar-group {
+    display: grid;
+    padding: 13px 0;
+    border-top: 1px solid var(--hm-border);
+  }
+  .sidebar-group > span {
+    margin-bottom: 6px;
+    color: var(--hm-text-faint);
+    font: 0.68rem var(--hm-font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .sidebar-group a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-inline: -8px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    color: var(--hm-text-secondary);
+    line-height: 1.35;
+    text-decoration: none;
+  }
+  .sidebar-group a:hover,
+  .sidebar-group a.active {
+    background: var(--hm-muted);
+    color: var(--hm-text);
+  }
+  .sidebar-group a.active {
+    box-shadow: inset 2px 0 0 var(--hm-link);
+    font-weight: 600;
+  }
+  .sidebar-group small {
+    color: var(--hm-text-faint);
+    font: 0.68rem var(--hm-font-mono);
+  }
+  .secondary {
+    margin-top: 4px;
+  }
+</style>

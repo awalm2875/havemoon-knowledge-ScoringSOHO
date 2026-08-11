@@ -1,0 +1,224 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { practicalTools } from '../data/knowledge';
+import { getSiteConfig } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  label?: string;
+}
+
+const { title, description, label = 'Buyer tool' } = Astro.props;
+const { site } = await getSiteConfig();
+---
+
+<BaseLayout title={`${title} | ${site.title}`} description={description}>
+  <main class="tool-page" data-pagefind-body>
+    <aside class="tool-sidebar">
+      <nav aria-label="Buyer tools">
+        <a class="tools-root" href="/tools/">Buyer tools</a>
+        {
+          practicalTools.map((tool) => (
+            <a class:list={{ active: Astro.url.pathname === tool.href }} href={tool.href}>
+              {tool.title}
+            </a>
+          ))
+        }
+      </nav>
+    </aside>
+    <div class="tool-main">
+      <header class="tool-header">
+        <p><a href="/">havemoon</a> / <a href="/tools/">tools</a></p>
+        <span>{label}</span>
+        <h1>{title}</h1>
+        <div>{description}</div>
+      </header>
+      <section class="tool-workspace">
+        <slot />
+      </section>
+      <aside class="tool-notice">
+        <strong>Planning estimate only.</strong> Outputs depend on the information you enter and are not
+        legal, customs, tax, compliance, or financial advice. Confirm current requirements and commercial
+        inputs independently.
+      </aside>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .tool-page {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 820px);
+    justify-content: center;
+    gap: 44px;
+    width: min(100%, var(--hm-shell));
+    margin: 0 auto;
+    padding: 104px 32px 72px;
+  }
+  .tool-sidebar nav {
+    position: sticky;
+    top: 88px;
+    display: grid;
+    padding-top: 8px;
+    border-top: 1px solid var(--hm-border);
+  }
+  .tool-sidebar a {
+    padding: 7px 8px;
+    border-radius: 4px;
+    color: var(--hm-text-secondary);
+    font-size: 0.8rem;
+    line-height: 1.35;
+    text-decoration: none;
+  }
+  .tool-sidebar a:hover,
+  .tool-sidebar a.active {
+    background: var(--hm-muted);
+    color: var(--hm-text);
+  }
+  .tool-sidebar .tools-root {
+    margin-bottom: 8px;
+    color: var(--hm-text);
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .tool-sidebar a.active {
+    box-shadow: inset 2px 0 0 var(--hm-link);
+    font-weight: 600;
+  }
+  .tool-main {
+    min-width: 0;
+  }
+  .tool-header {
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--hm-border);
+  }
+  .tool-header > p {
+    margin: 0 0 18px;
+    color: var(--hm-text-faint);
+    font: 0.8rem var(--hm-font-mono);
+  }
+  .tool-header > p a {
+    text-decoration: none;
+  }
+  .tool-header > span {
+    color: var(--hm-mark);
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .tool-header h1 {
+    margin: 4px 0 0;
+    font-size: clamp(2rem, 4vw, 2.7rem);
+    line-height: 1.16;
+  }
+  .tool-header > div {
+    max-width: 720px;
+    margin-top: 11px;
+    color: var(--hm-text-secondary);
+    font-size: 1rem;
+  }
+  .tool-workspace {
+    margin-top: 28px;
+  }
+  .tool-notice {
+    margin-top: 28px;
+    padding: 14px 16px;
+    border-left: 4px solid var(--hm-border-strong);
+    background: var(--hm-muted);
+    color: var(--hm-text-secondary);
+    font-size: 0.78rem;
+  }
+  .tool-notice strong {
+    color: var(--hm-text);
+  }
+  @media (max-width: 850px) {
+    .tool-page {
+      grid-template-columns: 1fr;
+      padding: 84px 20px 48px;
+    }
+    .tool-sidebar {
+      display: none;
+    }
+  }
+</style>
+
+<style is:global>
+  .tool-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 18px;
+  }
+  .tool-field {
+    display: grid;
+    gap: 5px;
+  }
+  .tool-field label,
+  .tool-field > span {
+    color: var(--hm-text);
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .tool-field small {
+    color: var(--hm-text-faint);
+    font-size: 0.68rem;
+    line-height: 1.35;
+  }
+  .tool-field input,
+  .tool-field select {
+    min-width: 0;
+    width: 100%;
+    min-height: 38px;
+    padding: 7px 9px;
+    border: 1px solid var(--hm-border-strong);
+    border-radius: 5px;
+    background: var(--hm-page);
+    color: var(--hm-text);
+  }
+  .tool-field input:focus,
+  .tool-field select:focus {
+    border-color: var(--hm-link);
+    outline: 2px solid color-mix(in srgb, var(--hm-link) 18%, transparent);
+  }
+  .tool-results {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 24px;
+    border-top: 1px solid var(--hm-border);
+    border-left: 1px solid var(--hm-border);
+  }
+  .tool-result {
+    padding: 15px;
+    border-right: 1px solid var(--hm-border);
+    border-bottom: 1px solid var(--hm-border);
+  }
+  .tool-result span {
+    display: block;
+    color: var(--hm-text-faint);
+    font-size: 0.7rem;
+  }
+  .tool-result strong {
+    display: block;
+    margin-top: 4px;
+    color: var(--hm-text);
+    font-size: 1.2rem;
+  }
+  .tool-detail {
+    margin-top: 26px;
+  }
+  .tool-detail h2 {
+    margin: 0 0 10px;
+    font-size: 1.15rem;
+  }
+  .tool-detail p,
+  .tool-detail li {
+    color: var(--hm-text-secondary);
+    font-size: 0.86rem;
+  }
+  @media (max-width: 600px) {
+    .tool-form-grid,
+    .tool-results {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

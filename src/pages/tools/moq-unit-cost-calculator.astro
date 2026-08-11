@@ -1,0 +1,205 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const title = 'MOQ & Unit Cost Calculator';
+const description =
+  'Model how quantity, fixed setup, variable cost, defect allowance, packaging, and freight change effective cost per usable unit.';
+---
+
+<ToolLayout title={title} description={description} label="Production calculator">
+  <form id="moq-cost-form" class="tool-form-grid">
+    <div class="tool-field">
+      <label for="moq-quantity">Order quantity</label><input
+        id="moq-quantity"
+        name="quantity"
+        type="number"
+        min="1"
+        step="1"
+        value="1000"
+      />
+    </div>
+    <div class="tool-field">
+      <label for="moq-currency">Currency label</label><input
+        id="moq-currency"
+        name="currency"
+        type="text"
+        maxlength="4"
+        value="$"
+      />
+    </div>
+    <div class="tool-field">
+      <label for="variable-cost">Variable manufacturing cost / unit</label><input
+        id="variable-cost"
+        name="variableCost"
+        type="number"
+        min="0"
+        step="0.01"
+        value="4.2"
+      />
+    </div>
+    <div class="tool-field">
+      <label for="packaging-cost">Packaging cost / unit</label><input
+        id="packaging-cost"
+        name="packagingCost"
+        type="number"
+        min="0"
+        step="0.01"
+        value="0.45"
+      />
+    </div>
+    <div class="tool-field">
+      <label for="setup-cost">Fixed setup and tooling allocation</label><input
+        id="setup-cost"
+        name="setupCost"
+        type="number"
+        min="0"
+        step="0.01"
+        value="900"
+      />
+    </div>
+    <div class="tool-field">
+      <label for="order-freight">Order freight and logistics</label><input
+        id="order-freight"
+        name="freight"
+        type="number"
+        min="0"
+        step="0.01"
+        value="1800"
+      />
+    </div>
+    <div class="tool-field">
+      <label for="other-fixed">Other fixed order cost</label><input
+        id="other-fixed"
+        name="otherFixed"
+        type="number"
+        min="0"
+        step="0.01"
+        value="350"
+      />
+    </div>
+    <div class="tool-field">
+      <label for="moq-defects">Expected unusable units (%)</label><input
+        id="moq-defects"
+        name="defectRate"
+        type="number"
+        min="0"
+        max="99"
+        step="0.1"
+        value="3"
+      />
+    </div>
+  </form>
+
+  <div class="tool-results" aria-live="polite">
+    <div class="tool-result">
+      <span>Total modeled order cost</span><strong id="moq-total">—</strong>
+    </div>
+    <div class="tool-result">
+      <span>Cost per ordered unit</span><strong id="moq-ordered">—</strong>
+    </div>
+    <div class="tool-result">
+      <span>Cost per usable unit</span><strong id="moq-usable">—</strong>
+    </div>
+  </div>
+
+  <div class="comparison-table">
+    <h2>Quantity comparison</h2>
+    <table>
+      <thead
+        ><tr
+          ><th>Scenario</th><th>Quantity</th><th>Fixed cost / unit</th><th
+            >Effective usable-unit cost</th
+          ></tr
+        ></thead
+      ><tbody id="moq-scenarios"></tbody>
+    </table>
+  </div>
+
+  <div class="tool-detail">
+    <h2>What the model reveals</h2>
+    <p>
+      Fixed setup and order logistics fall per unit as quantity rises. Variable manufacturing and
+      packaging do not. The commercial decision should still include inventory financing, storage,
+      markdown, demand uncertainty, lead time, and compliance risk.
+    </p>
+  </div>
+</ToolLayout>
+
+<style>
+  .comparison-table {
+    margin-top: 28px;
+  }
+  .comparison-table h2 {
+    margin: 0 0 10px;
+    font-size: 1.15rem;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+  th,
+  td {
+    padding: 9px 10px;
+    border: 1px solid var(--hm-border);
+    text-align: right;
+  }
+  th:first-child,
+  td:first-child {
+    text-align: left;
+  }
+  thead th {
+    background: var(--hm-muted);
+  }
+  @media (max-width: 600px) {
+    .comparison-table {
+      overflow-x: auto;
+    }
+    table {
+      min-width: 540px;
+    }
+  }
+</style>
+
+<script>
+  function initMoqCost() {
+    const form = document.querySelector<HTMLFormElement>('#moq-cost-form');
+    if (!form || form.dataset.ready === 'true') return;
+    form.dataset.ready = 'true';
+    const get = (name: string) => Number(new FormData(form).get(name)) || 0;
+    const update = () => {
+      const data = new FormData(form);
+      const quantity = Math.max(1, get('quantity'));
+      const fixed = get('setupCost') + get('freight') + get('otherFixed');
+      const variable = get('variableCost') + get('packagingCost');
+      const defectRate = Math.min(99, get('defectRate')) / 100;
+      const currency = String(data.get('currency') || '$').slice(0, 4);
+      const format = (value: number) =>
+        `${currency}${value.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}`;
+      const calculate = (qty: number) => {
+        const total = fixed + variable * qty;
+        return {
+          total,
+          ordered: total / qty,
+          usable: total / Math.max(1, qty * (1 - defectRate)),
+          fixedUnit: fixed / qty,
+        };
+      };
+      const current = calculate(quantity);
+      document.querySelector('#moq-total')!.textContent = format(current.total);
+      document.querySelector('#moq-ordered')!.textContent = format(current.ordered);
+      document.querySelector('#moq-usable')!.textContent = format(current.usable);
+      const scenarios = [Math.max(1, Math.round(quantity / 2)), quantity, quantity * 2];
+      document.querySelector('#moq-scenarios')!.innerHTML = scenarios
+        .map((qty, index) => {
+          const result = calculate(qty);
+          return `<tr><td>${['Half quantity', 'Entered quantity', 'Double quantity'][index]}</td><td>${qty.toLocaleString()}</td><td>${format(result.fixedUnit)}</td><td>${format(result.usable)}</td></tr>`;
+        })
+        .join('');
+    };
+    form.addEventListener('input', update);
+    update();
+  }
+  initMoqCost();
+  document.addEventListener('astro:page-load', initMoqCost);
+</script>

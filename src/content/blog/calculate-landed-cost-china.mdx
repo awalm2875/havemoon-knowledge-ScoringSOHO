@@ -1,0 +1,172 @@
+---
+title: "How to Calculate Landed Cost from China"
+description: "A repeatable landed-cost model for product price, freight, duty, tax, brokerage, financing, defects, and cost per usable unit."
+date: 2026-07-19
+updatedDate: 2026-07-19
+draft: false
+showHeroImage: false
+sticky: false
+categories: ["Sourcing Basics", "Logistics & Incoterms"]
+tags: ["landed cost", "import cost", "duty", "freight"]
+comments: false
+sidebar: { enable: true, toc: true, relatedPosts: true }
+---
+
+Landed cost is the total cost required to bring imported goods to a defined point, ready for the next business step. A useful model goes beyond the supplier’s unit price and international freight. It includes origin charges, insurance, destination fees, customs duty, tax treatment, brokerage, inland delivery, financing, and expected quality loss.
+
+The first rule is to name the endpoint. “Landed” might mean the destination port, the buyer’s warehouse, or a fulfillment center. Two calculations cannot be compared unless they end at the same place and use the same tax assumptions.
+
+## Basic formula
+
+For an order, use:
+
+`Landed order cost = product + origin + freight + insurance + destination + duty + nonrecoverable tax + brokerage + inland + other risk costs`
+
+Then:
+
+`Landed cost per usable unit = landed order cost ÷ expected usable units`
+
+Expected usable units are ordered units minus samples, destructive-test units, expected defects, and losses that cannot be recovered or sold.
+
+## 1. Product and supplier-side costs
+
+Begin with the commercial invoice value, then add costs that may sit outside the quoted unit price:
+
+- product units;
+- tooling, setup, or development allocated to the order;
+- retail and export packaging;
+- labels, manuals, and inserts;
+- testing and inspection;
+- bank or payment fees;
+- expected overrun quantity;
+- molds or sample freight if allocated.
+
+Identify the Incoterms rule and named place. An EXW price may exclude loading, pickup, and export handling that an FOB quote includes. A CIF quote includes specified freight and insurance to a named port but may exclude significant destination charges.
+
+## 2. Origin logistics
+
+Depending on the commercial term and shipment, origin costs can include:
+
+- factory pickup;
+- consolidation or warehouse handling;
+- export customs declaration;
+- documentation;
+- terminal handling;
+- container loading or less-than-container-load charges;
+- security, fuel, peak-season, or other carrier surcharges;
+- storage or waiting time caused by missed cut-off.
+
+Ask the forwarder for an itemized origin schedule. Clarify which party receives each invoice.
+
+## 3. Main freight and cargo insurance
+
+Use the transport mode and chargeable basis. Air freight often uses the greater of actual and volumetric weight. Ocean less-than-container-load freight may be based on volume with minimum charges, while a full container has equipment, route, and seasonal factors.
+
+Include expected surcharges and realistic exchange rates. For cargo insurance, use the actual premium and coverage. Do not assume a supplier-arranged policy covers the full commercial exposure.
+
+## 4. Customs value and classification
+
+Customs duty depends on destination-country rules, tariff classification, origin, customs value, and any preferential, trade-remedy, or product-specific measures.
+
+In the United States, U.S. Customs and Border Protection publishes [Importing into the United States](https://www.cbp.gov/sites/default/files/documents/Importing%20into%20the%20U.S.pdf), an official overview of entry, classification, valuation, marking, and importer responsibilities. The importer remains responsible for reasonable care even when using a customs broker.
+
+Do not estimate duty from a product keyword alone. Confirm the tariff code and applicable rate with authoritative tariff resources or a qualified customs professional. Consider antidumping, countervailing, safeguard, or special duties where relevant.
+
+## 5. Duty calculation
+
+An ad valorem duty is commonly modeled as:
+
+`Customs value × duty rate`
+
+But the customs-value basis and additions vary by jurisdiction. Assists, royalties, packing, commissions, freight, insurance, and related-party pricing can affect valuation depending on the rules.
+
+Some tariffs use specific rates per unit, weight, volume, or a compound formula. Keep the duty calculation in a separate worksheet with its code, source, rate date, and assumptions.
+
+## 6. Import tax and recovery
+
+VAT, GST, sales tax, or similar charges may be payable at import. Whether they are a recoverable input tax or a permanent cost depends on registration, documentation, product use, and local rules.
+
+Show recoverable tax as a cash-flow requirement rather than silently including or excluding it. If tax cannot be recovered, include it in landed cost. Obtain jurisdiction-specific tax advice.
+
+## 7. Destination charges and final delivery
+
+Destination costs may include:
+
+- terminal or port handling;
+- document and carrier fees;
+- customs broker and bond;
+- government examination or inspection;
+- storage, demurrage, and detention;
+- deconsolidation;
+- port-to-warehouse transport;
+- appointment, liftgate, residential, or fulfillment-center charges;
+- pallet exchange or rework.
+
+Request a destination charge schedule before selecting a freight offer. A low prepaid ocean rate can be paired with high charges payable on arrival.
+
+## 8. Quality, delay, and financing costs
+
+For commercial decisions, include expected costs even when they do not appear on customs documents:
+
+- inspection and reinspection;
+- expected defect, damage, and shortage allowance;
+- sorting, rework, disposal, or returns;
+- air freight caused by production delay;
+- inventory financing during production and transit;
+- currency conversion and rate buffer;
+- warehouse receiving and labeling;
+- obsolescence or markdown allowance.
+
+Keep “customs landed value” and “management landed cost” separate if your finance system uses different definitions.
+
+## Worked example
+
+Suppose a buyer orders 2,000 units:
+
+| Cost item | Amount |
+| --- | ---: |
+| Product and packaging | $12,000 |
+| Origin and export charges | $850 |
+| Freight and insurance | $2,200 |
+| Destination and brokerage | $1,050 |
+| Duty | $1,080 |
+| Nonrecoverable tax/fees | $320 |
+| Inland delivery | $500 |
+| Inspection and expected loss | $400 |
+| **Total** | **$18,400** |
+
+If 1,960 units are expected to be usable, the modeled landed cost is `$18,400 ÷ 1,960 = $9.39` per usable unit. Dividing by the ordered 2,000 units would understate the unit economics.
+
+This example is illustrative only; it is not a tariff or tax determination.
+
+## Use scenarios, not one perfect number
+
+Create at least three cases:
+
+- **Base:** current quotes and expected yield;
+- **Low:** favorable freight, exchange rate, and full yield;
+- **High:** rate increase, examination, delay, and higher defect allowance.
+
+Track which variables most affect margin. For heavy low-value goods, freight may dominate. For regulated or trade-remedy products, duty and compliance can dominate. For custom goods, defects and tooling may matter more than the supplier’s quoted unit-price difference.
+
+## Landed-cost checklist
+
+- [ ] Endpoint and currency are defined.
+- [ ] Incoterms rule, named place, and version are recorded.
+- [ ] Product, setup, packaging, and inspection costs are included.
+- [ ] Origin, freight, insurance, and destination charges are itemized.
+- [ ] Tariff classification, customs value, origin, and duty assumptions are sourced.
+- [ ] Recoverable and nonrecoverable tax are separated.
+- [ ] Inland delivery and receiving costs are included.
+- [ ] Usable-unit yield, defects, delay, and financing are modeled.
+- [ ] Low, base, and high scenarios are compared.
+
+The most useful landed-cost model is auditable. Every number should show its source, date, currency, tax treatment, and owner. Update it when the specification, supplier, route, quantity, tariff, or Incoterms rule changes.
+
+## Continue the sourcing workflow
+
+- Standardize carrier scope with the [freight forwarder quote comparison guide](/blog/compare-freight-forwarder-quotes-china/).
+- Confirm the cost handover point in the [FOB, EXW, and CIF buyer guide](/blog/fob-exw-cif-china-imports/).
+- Capture carton dimensions and protection requirements in a [China packaging specification](/blog/china-packaging-specification/).
+
+> Customs, tariff, and tax calculations are jurisdiction-specific. Confirm current treatment with the relevant authorities and qualified customs and tax professionals.

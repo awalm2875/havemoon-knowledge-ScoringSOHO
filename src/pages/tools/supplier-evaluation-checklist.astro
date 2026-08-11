@@ -1,0 +1,182 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const title = 'Supplier Evaluation Checklist';
+const description =
+  'Score whether supplier identity, capability, quality, compliance, and commercial claims are supported by reviewable evidence.';
+const checks = [
+  [
+    'Identity',
+    'Chinese legal name and official registration record match the proposed contract entity.',
+  ],
+  [
+    'Identity',
+    'Bank beneficiary was independently confirmed and any different entity is documented.',
+  ],
+  [
+    'Site',
+    'Operating address and relationship between factory, exporter, and trading company are clear.',
+  ],
+  [
+    'Capability',
+    'Relevant equipment, process flow, technical answers, and outsourced processes were verified.',
+  ],
+  [
+    'Capacity',
+    'Monthly capacity is supported by hours, cycle time, yield, loading, and bottleneck assumptions.',
+  ],
+  [
+    'Quality',
+    'Completed inspection, calibration, nonconformance, and corrective-action records were reviewed.',
+  ],
+  [
+    'Traceability',
+    'A finished lot can be connected to production and critical material or component records.',
+  ],
+  [
+    'Compliance',
+    'Evidence matches the exact model, materials, destination, standard, and current production site.',
+  ],
+  [
+    'Samples',
+    'A pre-production sample and deviations are documented against the controlled specification.',
+  ],
+  [
+    'Commercial',
+    'Quotation, MOQ, lead time, tooling, payment, Incoterms, and change rules are written.',
+  ],
+  ['Inspection', 'Production and pre-shipment inspection gates are agreed before order release.'],
+  [
+    'Continuity',
+    'Critical supplier, equipment, material, staffing, and logistics risks have owners and triggers.',
+  ],
+] as const;
+---
+
+<ToolLayout title={title} description={description} label="Due-diligence checklist">
+  <div class="checklist-head">
+    <p>Mark only what has been supported by evidence relevant to this product and transaction.</p>
+    <button id="reset-checklist" type="button">Reset</button>
+  </div>
+  <form id="supplier-checklist" class="supplier-checklist">
+    {
+      checks.map(([area, text], index) => (
+        <label>
+          <input type="checkbox" name={`check-${index}`} />
+          <span>
+            <>
+              <small>{area}</small>
+              <strong>{text}</strong>
+            </>
+          </span>
+        </label>
+      ))
+    }
+  </form>
+  <div class="tool-results" aria-live="polite">
+    <div class="tool-result">
+      <span>Evidence checks completed</span><strong id="checks-completed"
+        >0 / {checks.length}</strong
+      >
+    </div>
+    <div class="tool-result"><span>Completion</span><strong id="checks-score">0%</strong></div>
+    <div class="tool-result">
+      <span>Planning status</span><strong id="checks-status">Evidence incomplete</strong>
+    </div>
+  </div>
+  <div class="tool-detail">
+    <h2>How to interpret the result</h2>
+    <p>
+      This is not a supplier certification or fraud guarantee. A high completion percentage means
+      more named checks have evidence; it does not mean every risk has equal importance. An
+      unresolved legal-identity or payment-beneficiary concern can justify stopping even when other
+      boxes are complete.
+    </p>
+  </div>
+</ToolLayout>
+
+<style>
+  .checklist-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 12px;
+  }
+  .checklist-head p {
+    margin: 0;
+    color: var(--hm-text-secondary);
+    font-size: 0.82rem;
+  }
+  .checklist-head button {
+    padding: 6px 10px;
+    border: 1px solid var(--hm-border-strong);
+    border-radius: 5px;
+    background: var(--hm-muted);
+    color: var(--hm-text);
+    font-size: 0.76rem;
+    cursor: pointer;
+  }
+  .supplier-checklist {
+    border-top: 1px solid var(--hm-border);
+  }
+  .supplier-checklist label {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    gap: 10px;
+    padding: 12px 4px;
+    border-bottom: 1px solid var(--hm-border);
+    cursor: pointer;
+  }
+  .supplier-checklist input {
+    margin-top: 4px;
+    accent-color: var(--hm-link);
+  }
+  .supplier-checklist small,
+  .supplier-checklist strong {
+    display: block;
+  }
+  .supplier-checklist small {
+    color: var(--hm-mark);
+    font-size: 0.67rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .supplier-checklist strong {
+    margin-top: 2px;
+    color: var(--hm-text);
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+</style>
+
+<script>
+  function initSupplierChecklist() {
+    const form = document.querySelector<HTMLFormElement>('#supplier-checklist');
+    if (!form || form.dataset.ready === 'true') return;
+    form.dataset.ready = 'true';
+    const boxes = Array.from(form.querySelectorAll<HTMLInputElement>('input[type="checkbox"]'));
+    const update = () => {
+      const completed = boxes.filter((box) => box.checked).length;
+      const score = Math.round((completed / boxes.length) * 100);
+      document.querySelector('#checks-completed')!.textContent = `${completed} / ${boxes.length}`;
+      document.querySelector('#checks-score')!.textContent = `${score}%`;
+      document.querySelector('#checks-status')!.textContent =
+        score === 100
+          ? 'Review critical risks'
+          : score >= 75
+            ? 'Close remaining evidence'
+            : 'Evidence incomplete';
+    };
+    form.addEventListener('change', update);
+    document.querySelector('#reset-checklist')?.addEventListener('click', () => {
+      boxes.forEach((box) => {
+        box.checked = false;
+      });
+      update();
+    });
+    update();
+  }
+  initSupplierChecklist();
+  document.addEventListener('astro:page-load', initSupplierChecklist);
+</script>

@@ -1,0 +1,300 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import KnowledgeSidebar from '../../components/knowledge/KnowledgeSidebar.astro';
+import { getSiteConfig } from '../../data/site';
+import { knowledgeCategories } from '../../data/knowledge';
+import { sortBlogPostsForArchive } from '../../utils/content-dates';
+
+const { site, pages } = await getSiteConfig();
+const posts = sortBlogPostsForArchive(await getCollection('blog', ({ data }) => !data.draft));
+---
+
+<BaseLayout title={`${pages.blog.title} | ${site.title}`} description={pages.blog.subtitle}>
+  <main class="guides-page" data-pagefind-body>
+    <aside class="guides-sidebar"><KnowledgeSidebar posts={posts} /></aside>
+
+    <div class="guides-main">
+      <header class="guides-header">
+        <p class="breadcrumbs"><a href="/">havemoon</a> / guides</p>
+        <h1>{pages.blog.title}</h1>
+        <p>{pages.blog.subtitle}</p>
+        <div class="guide-meta">
+          <span>{posts.length} original guides</span>
+          <span>{knowledgeCategories.length} sourcing categories</span>
+          <span>Primary sources linked where rules apply</span>
+        </div>
+      </header>
+
+      <section class="category-overview" aria-labelledby="category-title">
+        <div class="section-title">
+          <h2 id="category-title">Browse by category</h2>
+          <p>Start with the buyer decision you need to make.</p>
+        </div>
+        <div class="category-grid">
+          {
+            knowledgeCategories.map((category) => {
+              const count = posts.filter((post) =>
+                post.data.categories.includes(category.label),
+              ).length;
+              return (
+                <a href={`/blog/categories/${category.slug}/`}>
+                  <span>{category.label}</span>
+                  <small>
+                    {count} {count === 1 ? 'guide' : 'guides'}
+                  </small>
+                  <p>{category.description}</p>
+                </a>
+              );
+            })
+          }
+        </div>
+      </section>
+
+      <section class="all-guides" aria-labelledby="all-guides-title">
+        <div class="section-title">
+          <h2 id="all-guides-title">All guides</h2>
+          <p>Newest and editor-selected foundational guides first.</p>
+        </div>
+        <div class="guide-list">
+          {
+            posts.map((post) => (
+              <article>
+                <div class="article-row-main">
+                  <p class="article-category">{post.data.categories.join(' · ')}</p>
+                  <h3>
+                    <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+                  </h3>
+                  <p>{post.data.description}</p>
+                  <div class="article-tags">
+                    {post.data.tags.slice(0, 4).map((tag) => (
+                      <span>{tag}</span>
+                    ))}
+                  </div>
+                </div>
+                <div class="article-row-meta">
+                  {post.data.sticky && <span class="foundational">Foundational</span>}
+                  <FormattedDate date={post.data.date} />
+                  <span aria-hidden="true">→</span>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .guides-page {
+    display: grid;
+    grid-template-columns: 236px minmax(0, 1fr);
+    gap: 44px;
+    width: min(100%, var(--hm-shell));
+    margin: 0 auto;
+    padding: 104px 32px 72px;
+  }
+  .guides-sidebar {
+    min-width: 0;
+  }
+  .guides-sidebar :global(.knowledge-sidebar) {
+    position: sticky;
+    top: 88px;
+  }
+  .guides-main {
+    min-width: 0;
+  }
+  .guides-header {
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--hm-border);
+  }
+  .breadcrumbs {
+    margin: 0 0 18px;
+    color: var(--hm-text-faint);
+    font: 0.8rem var(--hm-font-mono);
+  }
+  .breadcrumbs a {
+    text-decoration: none;
+  }
+  .guides-header h1 {
+    margin: 0;
+    font-size: clamp(2.1rem, 4vw, 2.8rem);
+    line-height: 1.15;
+  }
+  .guides-header > p:not(.breadcrumbs) {
+    max-width: 760px;
+    margin: 12px 0 0;
+    color: var(--hm-text-secondary);
+    font-size: 1.05rem;
+  }
+  .guide-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin-top: 18px;
+    color: var(--hm-text-faint);
+    font-size: 0.76rem;
+  }
+  .guide-meta span::before {
+    content: '✓';
+    margin-right: 5px;
+    color: var(--hm-success);
+  }
+  .category-overview,
+  .all-guides {
+    margin-top: 36px;
+  }
+  .section-title {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 12px;
+  }
+  .section-title h2 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+  .section-title p {
+    margin: 0;
+    color: var(--hm-text-faint);
+    font-size: 0.8rem;
+  }
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid var(--hm-border);
+    border-left: 1px solid var(--hm-border);
+  }
+  .category-grid a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) max-content;
+    gap: 4px 12px;
+    padding: 14px 16px;
+    border-right: 1px solid var(--hm-border);
+    border-bottom: 1px solid var(--hm-border);
+    color: inherit;
+    text-decoration: none;
+  }
+  .category-grid a:hover {
+    background: var(--hm-muted);
+  }
+  .category-grid span {
+    color: var(--hm-link);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .category-grid small {
+    color: var(--hm-text-faint);
+    font-size: 0.7rem;
+  }
+  .category-grid p {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: var(--hm-text-secondary);
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+  .guide-list {
+    border-top: 1px solid var(--hm-border);
+  }
+  .guide-list article {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px;
+    gap: 24px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--hm-border);
+  }
+  .article-category {
+    margin: 0 0 4px !important;
+    color: var(--hm-mark) !important;
+    font-size: 0.72rem !important;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .guide-list h3 {
+    margin: 0;
+    font-size: 1.08rem;
+    line-height: 1.4;
+  }
+  .guide-list h3 a {
+    text-decoration: none;
+  }
+  .article-row-main > p {
+    max-width: 720px;
+    margin: 6px 0 0;
+    color: var(--hm-text-secondary);
+    font-size: 0.86rem;
+    line-height: 1.55;
+  }
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 9px;
+  }
+  .article-tags span {
+    padding: 1px 6px;
+    border: 1px solid var(--hm-border);
+    border-radius: 10px;
+    color: var(--hm-text-faint);
+    font-size: 0.66rem;
+  }
+  .article-row-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 7px;
+    color: var(--hm-text-faint);
+    font-size: 0.72rem;
+    text-align: right;
+  }
+  .foundational {
+    color: var(--hm-mark);
+    font-weight: 600;
+  }
+  .article-row-meta > span:last-child {
+    margin-top: auto;
+    color: var(--hm-link);
+    font-size: 1rem;
+  }
+
+  @media (max-width: 900px) {
+    .guides-page {
+      grid-template-columns: 1fr;
+      gap: 26px;
+    }
+    .guides-sidebar {
+      display: none;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .guides-page {
+      padding: 84px 20px 48px;
+    }
+    .category-grid {
+      grid-template-columns: 1fr;
+    }
+    .guide-list article {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .article-row-meta {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      text-align: left;
+    }
+    .article-row-meta > span:last-child {
+      margin: 0 0 0 auto;
+    }
+    .section-title {
+      align-items: start;
+      flex-direction: column;
+      gap: 3px;
+    }
+  }
+</style>

@@ -1,0 +1,194 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const title = 'China Landed Cost Calculator';
+const description =
+  'Estimate order-level and usable-unit cost from product price through freight, duty, destination charges, and quality loss.';
+---
+
+<ToolLayout title={title} description={description} label="Cost calculator">
+  <form id="landed-cost-form" class="tool-form-grid">
+    <div class="tool-field">
+      <label for="quantity">Ordered quantity</label><input
+        id="quantity"
+        name="quantity"
+        type="number"
+        min="1"
+        step="1"
+        value="2000"
+      />
+    </div>
+    <div class="tool-field">
+      <label for="currency">Currency label</label><input
+        id="currency"
+        name="currency"
+        type="text"
+        maxlength="4"
+        value="$"
+      />
+    </div>
+    <div class="tool-field">
+      <label for="unit-price">Supplier unit price</label><input
+        id="unit-price"
+        name="unitPrice"
+        type="number"
+        min="0"
+        step="0.01"
+        value="6"
+      />
+    </div>
+    <div class="tool-field">
+      <label for="fixed-product">Tooling, setup, testing</label><input
+        id="fixed-product"
+        name="fixedProduct"
+        type="number"
+        min="0"
+        step="0.01"
+        value="400"
+      />
+    </div>
+    <div class="tool-field">
+      <label for="origin">Origin and export charges</label><input
+        id="origin"
+        name="origin"
+        type="number"
+        min="0"
+        step="0.01"
+        value="850"
+      />
+    </div>
+    <div class="tool-field">
+      <label for="freight">Main freight and insurance</label><input
+        id="freight"
+        name="freight"
+        type="number"
+        min="0"
+        step="0.01"
+        value="2200"
+      />
+    </div>
+    <div class="tool-field">
+      <label for="destination">Destination and brokerage</label><input
+        id="destination"
+        name="destination"
+        type="number"
+        min="0"
+        step="0.01"
+        value="1050"
+      />
+    </div>
+    <div class="tool-field">
+      <label for="inland">Inland delivery and receiving</label><input
+        id="inland"
+        name="inland"
+        type="number"
+        min="0"
+        step="0.01"
+        value="500"
+      />
+    </div>
+    <div class="tool-field">
+      <label for="duty-rate">Duty rate (%)</label><input
+        id="duty-rate"
+        name="dutyRate"
+        type="number"
+        min="0"
+        step="0.01"
+        value="8"
+      /><small
+        >Applied here to product value only. Confirm the legal customs-value basis separately.</small
+      >
+    </div>
+    <div class="tool-field">
+      <label for="tax-fees">Nonrecoverable tax and fees</label><input
+        id="tax-fees"
+        name="taxFees"
+        type="number"
+        min="0"
+        step="0.01"
+        value="320"
+      />
+    </div>
+    <div class="tool-field">
+      <label for="quality-cost">Inspection and expected loss</label><input
+        id="quality-cost"
+        name="qualityCost"
+        type="number"
+        min="0"
+        step="0.01"
+        value="400"
+      />
+    </div>
+    <div class="tool-field">
+      <label for="defect-rate">Expected unusable units (%)</label><input
+        id="defect-rate"
+        name="defectRate"
+        type="number"
+        min="0"
+        max="99"
+        step="0.1"
+        value="2"
+      />
+    </div>
+  </form>
+
+  <div class="tool-results" aria-live="polite">
+    <div class="tool-result">
+      <span>Estimated landed order cost</span><strong id="total-cost">—</strong>
+    </div>
+    <div class="tool-result">
+      <span>Cost per ordered unit</span><strong id="ordered-unit-cost">—</strong>
+    </div>
+    <div class="tool-result">
+      <span>Cost per expected usable unit</span><strong id="usable-unit-cost">—</strong>
+    </div>
+  </div>
+
+  <div class="tool-detail">
+    <h2>How the estimate works</h2>
+    <p>
+      Product value is quantity × supplier unit price. The simple duty estimate is product value ×
+      duty rate. All other order-level costs are added, then divided by ordered or expected usable
+      units.
+    </p>
+    <p>
+      Keep recoverable import tax separate from permanent landed cost, and add low, base, and high
+      scenarios for freight, exchange rates, examinations, delay, and defects.
+    </p>
+  </div>
+</ToolLayout>
+
+<script>
+  function initLandedCost() {
+    const form = document.querySelector<HTMLFormElement>('#landed-cost-form');
+    if (!form || form.dataset.ready === 'true') return;
+    form.dataset.ready = 'true';
+    const number = (name: string) => Number(new FormData(form).get(name)) || 0;
+    const update = () => {
+      const quantity = Math.max(1, number('quantity'));
+      const productValue = quantity * number('unitPrice');
+      const duty = (productValue * number('dutyRate')) / 100;
+      const total =
+        productValue +
+        number('fixedProduct') +
+        number('origin') +
+        number('freight') +
+        number('destination') +
+        number('inland') +
+        duty +
+        number('taxFees') +
+        number('qualityCost');
+      const usableUnits = Math.max(1, quantity * (1 - Math.min(99, number('defectRate')) / 100));
+      const currency = String(new FormData(form).get('currency') || '$').slice(0, 4);
+      const format = (value: number) =>
+        `${currency}${value.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}`;
+      document.querySelector('#total-cost')!.textContent = format(total);
+      document.querySelector('#ordered-unit-cost')!.textContent = format(total / quantity);
+      document.querySelector('#usable-unit-cost')!.textContent = format(total / usableUnits);
+    };
+    form.addEventListener('input', update);
+    update();
+  }
+  initLandedCost();
+  document.addEventListener('astro:page-load', initLandedCost);
+</script>

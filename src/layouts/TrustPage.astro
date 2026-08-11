@@ -1,0 +1,97 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { getSiteConfig } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  updated?: string;
+}
+const { title, description, updated = 'August 9, 2026' } = Astro.props;
+const { site } = await getSiteConfig();
+---
+
+<BaseLayout title={`${title} | ${site.title}`} description={description}>
+  <main class="trust-page" data-pagefind-body>
+    <header>
+      <p><a href="/">havemoon</a> / {Astro.url.pathname.split('/').filter(Boolean).join('/')}</p>
+      <h1>{title}</h1>
+      <span>{description}</span>
+      <small>Last updated: {updated}</small>
+    </header>
+    <article><slot /></article>
+  </main>
+</BaseLayout>
+
+<style>
+  .trust-page {
+    width: min(100%, 780px);
+    margin: 0 auto;
+    padding: 104px 32px 72px;
+  }
+  header {
+    padding-bottom: 27px;
+    border-bottom: 1px solid var(--hm-border);
+  }
+  header > p {
+    margin: 0 0 18px;
+    color: var(--hm-text-faint);
+    font: 0.8rem var(--hm-font-mono);
+  }
+  header > p a {
+    text-decoration: none;
+  }
+  header h1 {
+    margin: 0;
+    font-size: clamp(2.1rem, 4vw, 2.7rem);
+  }
+  header > span {
+    display: block;
+    margin-top: 10px;
+    color: var(--hm-text-secondary);
+    font-size: 1rem;
+  }
+  header > small {
+    display: block;
+    margin-top: 10px;
+    color: var(--hm-text-faint);
+    font-size: 0.72rem;
+  }
+  article {
+    margin-top: 30px;
+    color: var(--hm-text);
+    font-size: 0.96rem;
+    line-height: 1.75;
+  }
+  article :global(h2) {
+    margin: 2em 0 0.65em;
+    padding-bottom: 0.35em;
+    border-bottom: 1px solid var(--hm-border);
+    font-size: 1.35rem;
+  }
+  article :global(h2:first-child) {
+    margin-top: 0;
+  }
+  article :global(h3) {
+    margin: 1.6em 0 0.45em;
+    font-size: 1.08rem;
+  }
+  article :global(p) {
+    margin: 0 0 1.1em;
+  }
+  article :global(li + li) {
+    margin-top: 0.35em;
+  }
+  article :global(.trust-note) {
+    padding: 13px 15px;
+    border-left: 4px solid var(--hm-border-strong);
+    background: var(--hm-muted);
+    color: var(--hm-text-secondary);
+    font-size: 0.84rem;
+  }
+  @media (max-width: 700px) {
+    .trust-page {
+      padding: 84px 20px 48px;
+    }
+  }
+</style>

@@ -1,0 +1,393 @@
+---
+import {
+  BookOpenCheck,
+  Boxes,
+  ClipboardCheck,
+  Factory,
+  Globe2,
+  Languages,
+  LibraryBig,
+  Scale,
+  ShieldCheck,
+  Ship,
+  UsersRound,
+  Wrench,
+} from 'lucide-astro';
+
+interface Profile {
+  name: string;
+  handle: string;
+  role: string;
+  email: string;
+  website: string;
+  avatar: string;
+}
+
+interface Props {
+  profile: Profile;
+  guideCount: number;
+  resourceCount: number;
+  toolCount: number;
+}
+
+const { profile, guideCount, resourceCount, toolCount } = Astro.props;
+
+const focusAreas = [
+  { label: 'Supplier checks', icon: ShieldCheck, tone: 'green' },
+  { label: 'Quality', icon: ClipboardCheck, tone: 'gold' },
+  { label: 'Freight', icon: Ship, tone: 'blue' },
+  { label: 'Compliance', icon: Scale, tone: 'rose' },
+];
+---
+
+<article class="profile-card">
+  <div class="brand-mark">
+    <img
+      src={profile.avatar}
+      alt="Havemoon mountain mark"
+      width="2040"
+      height="717"
+      loading="eager"
+    />
+  </div>
+
+  <div class="profile-heading">
+    <h2>{profile.name}</h2>
+    <p class="profile-handle">{profile.handle}</p>
+  </div>
+
+  <a class="profile-cta" href="/blog/">Browse sourcing guides</a>
+
+  <p class="profile-role">{profile.role}</p>
+
+  <dl class="profile-facts">
+    <div>
+      <dt><UsersRound size={18} stroke-width={1.8} /></dt>
+      <dd>For overseas buyers &amp; importers</dd>
+    </div>
+    <div>
+      <dt><Factory size={18} stroke-width={1.8} /></dt>
+      <dd>China sourcing &amp; manufacturing</dd>
+    </div>
+    <div>
+      <dt><Languages size={18} stroke-width={1.8} /></dt>
+      <dd>English knowledge base</dd>
+    </div>
+    <div>
+      <dt><Globe2 size={18} stroke-width={1.8} /></dt>
+      <dd><a href="/about/">About Havemoon</a></dd>
+    </div>
+  </dl>
+
+  <section class="profile-section desktop-profile-details" aria-labelledby="focus-areas-title">
+    <h3 id="focus-areas-title">Focus areas</h3>
+    <div class="focus-list">
+      {
+        focusAreas.map(({ label, icon: FocusIcon, tone }) => (
+          <a class:list={['focus-item', tone]} href="/blog/" aria-label={`Browse ${label} guides`}>
+            <FocusIcon size={27} stroke-width={1.7} />
+            <span>{label}</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="profile-section desktop-profile-details" aria-labelledby="highlights-title">
+    <h3 id="highlights-title">Highlights</h3>
+    <ul class="highlight-list">
+      <li>
+        <BookOpenCheck size={19} stroke-width={1.8} /><span
+          ><strong>{guideCount}</strong> original buyer guides</span
+        >
+      </li>
+      <li>
+        <LibraryBig size={19} stroke-width={1.8} /><span
+          ><strong>{resourceCount}</strong> reusable resources</span
+        >
+      </li>
+      <li>
+        <Wrench size={19} stroke-width={1.8} /><span
+          ><strong>{toolCount}</strong> browser-based tools</span
+        >
+      </li>
+      <li><Boxes size={19} stroke-width={1.8} /><span>Seven sourcing knowledge areas</span></li>
+    </ul>
+  </section>
+</article>
+
+<style>
+  .profile-card {
+    width: 100%;
+  }
+
+  .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    max-width: 300px;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border: 1px solid var(--hm-border);
+    border-radius: 50%;
+    background: var(--hm-muted);
+  }
+
+  .brand-mark img {
+    width: 76%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .profile-heading {
+    margin-top: 17px;
+  }
+
+  .profile-heading h2 {
+    margin: 0;
+    font-size: 1.76rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .profile-handle {
+    margin: 2px 0 0;
+    color: var(--hm-text-secondary);
+    font-size: 1.02rem;
+    font-weight: 300;
+    line-height: 1.35;
+  }
+
+  .profile-cta {
+    display: block;
+    margin-top: 15px;
+    padding: 6px 16px;
+    border: 1px solid var(--hm-border);
+    border-radius: 6px;
+    background: var(--hm-muted);
+    color: var(--hm-text);
+    font-size: 0.86rem;
+    font-weight: 600;
+    line-height: 1.45;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .profile-cta:hover {
+    border-color: var(--hm-border-strong);
+    background: var(--hm-muted-strong);
+    color: var(--hm-text);
+  }
+
+  .profile-role {
+    margin: 17px 0 0;
+    color: var(--hm-text);
+    font-size: 0.94rem;
+    line-height: 1.55;
+  }
+
+  .profile-facts {
+    display: grid;
+    gap: 8px;
+    margin: 15px 0 0;
+    font-size: 0.86rem;
+  }
+
+  .profile-facts div {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    gap: 9px;
+    align-items: center;
+  }
+
+  .profile-facts dt {
+    display: grid;
+    place-items: center;
+    color: var(--hm-text-secondary);
+  }
+
+  .profile-facts dd {
+    min-width: 0;
+    margin: 0;
+    color: var(--hm-text);
+    overflow-wrap: anywhere;
+  }
+
+  .profile-facts a {
+    text-decoration: none;
+  }
+
+  .profile-section {
+    margin-top: 18px;
+    padding-top: 17px;
+    border-top: 1px solid var(--hm-border);
+  }
+
+  .profile-section h3 {
+    margin: 0 0 12px;
+    font-size: 0.94rem;
+    line-height: 1.4;
+  }
+
+  .focus-list {
+    display: flex;
+    gap: 9px;
+  }
+
+  .focus-item {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    border: 1px solid color-mix(in srgb, var(--focus-color) 24%, var(--hm-border));
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--focus-color) 18%, var(--hm-page));
+    color: var(--focus-color);
+    text-decoration: none;
+  }
+
+  .focus-item span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .focus-item.green {
+    --focus-color: #1a7f37;
+  }
+  .focus-item.gold {
+    --focus-color: #9a6700;
+  }
+  .focus-item.blue {
+    --focus-color: #0969da;
+  }
+  .focus-item.rose {
+    --focus-color: #bf3989;
+  }
+
+  .highlight-list {
+    display: grid;
+    gap: 9px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .highlight-list li {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
+    gap: 8px;
+    align-items: center;
+    color: var(--hm-text-secondary);
+    font-size: 0.86rem;
+  }
+
+  .highlight-list svg {
+    color: var(--hm-text-secondary);
+  }
+
+  .highlight-list strong {
+    color: var(--hm-text);
+  }
+
+  @media (max-width: 900px) {
+    .profile-card {
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr);
+      gap: 16px 22px;
+      align-items: start;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--hm-border);
+    }
+
+    .brand-mark {
+      grid-row: 1 / 4;
+      width: 180px;
+      height: 86px;
+      aspect-ratio: auto;
+      overflow: visible;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .brand-mark img {
+      width: 100%;
+    }
+
+    .profile-heading,
+    .profile-role,
+    .profile-facts,
+    .profile-cta {
+      margin-top: 0;
+    }
+
+    .profile-heading h2 {
+      font-size: 1.6rem;
+    }
+
+    .profile-handle {
+      font-size: 0.95rem;
+      font-weight: 400;
+    }
+
+    .profile-role {
+      font-size: 0.91rem;
+    }
+
+    .profile-cta {
+      width: max-content;
+    }
+
+    .profile-facts {
+      grid-column: 1 / -1;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .desktop-profile-details {
+      display: none;
+    }
+  }
+
+  @media (max-width: 580px) {
+    .profile-card {
+      grid-template-columns: 1fr;
+      gap: 14px;
+      text-align: center;
+    }
+
+    .brand-mark {
+      grid-row: auto;
+      width: 196px;
+      height: 76px;
+      margin-inline: auto;
+    }
+
+    .profile-heading h2 {
+      font-size: 1.7rem;
+    }
+
+    .profile-handle {
+      max-width: 320px;
+      margin: 4px auto 0;
+    }
+
+    .profile-cta {
+      width: auto;
+    }
+
+    .profile-role {
+      max-width: 340px;
+      margin-inline: auto;
+    }
+
+    .profile-facts {
+      grid-column: auto;
+      grid-template-columns: 1fr;
+      text-align: left;
+    }
+  }
+</style>

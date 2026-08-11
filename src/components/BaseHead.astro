@@ -1,0 +1,68 @@
+---
+import type { ImageMetadata } from 'astro';
+import ThemeBaseHead from '@navfolio/theme-default/components/BaseHead.astro';
+import { getSiteConfig } from '../data/site';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: ImageMetadata | string;
+  robots?: string;
+}
+
+const {
+  title,
+  description,
+  image,
+  robots = 'index, follow, max-image-preview:large',
+} = Astro.props;
+const { site, fonts } = await getSiteConfig();
+const fallbackImage = '/images/brand/havemoon-mark-transparent-blue.png';
+const siteUrl = Astro.site?.toString() ?? site.url;
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${siteUrl.replace(/\/$/, '')}/#organization`,
+      name: 'Havemoon',
+      url: siteUrl,
+      logo: new URL('/images/brand/havemoon-mark-transparent-blue.png', siteUrl).toString(),
+      description: site.description,
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${siteUrl.replace(/\/$/, '')}/#website`,
+      url: siteUrl,
+      name: site.title,
+      description: site.description,
+      publisher: { '@id': `${siteUrl.replace(/\/$/, '')}/#organization` },
+      inLanguage: 'en',
+    },
+  ],
+};
+---
+
+<ThemeBaseHead
+  title={title}
+  description={description}
+  image={image}
+  fallbackImage={fallbackImage}
+  site={site}
+  fonts={fonts}
+/>
+<script is:inline>
+  document.querySelector('meta[name="generator"]')?.remove();
+</script>
+<meta name="author" content="Havemoon Editorial" />
+<meta name="robots" content={robots} />
+<meta property="og:site_name" content="Havemoon" />
+<meta name="theme-color" content="#0d1117" />
+<link rel="icon" type="image/png" href="/images/brand/havemoon-mark-transparent-blue.png" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<script
+  type="application/ld+json"
+  is:inline
+  set:html={JSON.stringify(structuredData).replace(/</g, '\\u003c')}
+/>

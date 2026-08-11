@@ -1,0 +1,416 @@
+---
+import { ListTree, Menu, Moon, Sun, X } from 'lucide-astro';
+import SiteSearch from './SiteSearch.astro';
+import TocTree from './TocTree.astro';
+import { getSiteConfig, getTopNavLinks } from '../../data/site';
+import { getUiText } from '../../utils/ui-text';
+import type { TocItem } from '../../utils/toc-tree';
+
+interface Props {
+  showTocIcon?: boolean;
+  tocItems?: TocItem[];
+}
+
+const { showTocIcon = false, tocItems = [] } = Astro.props;
+const siteConfig = await getSiteConfig();
+const { search } = siteConfig;
+const ui = getUiText(siteConfig);
+const links = await getTopNavLinks();
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+const pathname =
+  basePath && Astro.url.pathname.startsWith(basePath)
+    ? Astro.url.pathname.slice(basePath.length) || '/'
+    : Astro.url.pathname;
+const currentPath = pathname.replace(/\/$/, '') || '/';
+const shouldShowTocAction = showTocIcon && tocItems.length > 0;
+
+function withBase(href: string) {
+  if (/^(?:https?:|mailto:|#)/.test(href)) return href;
+  if (href === '/') return `${basePath}/` || '/';
+  return `${basePath}${href.startsWith('/') ? href : `/${href}`}`;
+}
+
+function isActive(href: string) {
+  if (/^(?:https?:|mailto:|#)/.test(href)) return false;
+  const normalized = href.replace(/\/$/, '') || '/';
+  return normalized === '/'
+    ? currentPath === '/'
+    : currentPath === normalized || currentPath.startsWith(`${normalized}/`);
+}
+---
+
+<header class="blog-top-nav" data-pagefind-ignore data-nav-root>
+  <div class="nav-shell">
+    <a class="brand" href={withBase('/')} aria-label="Havemoon home">
+      <img
+        src={withBase('/images/brand/havemoon-mark-transparent-blue.png')}
+        width="72"
+        height="25"
+        alt=""
+        aria-hidden="true"
+      />
+      <span>Havemoon</span>
+    </a>
+
+    <nav class="desktop-links" aria-label="Primary navigation">
+      {
+        links.map((link) => (
+          <a class:list={['nav-link', { active: isActive(link.href) }]} href={withBase(link.href)}>
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="nav-actions" aria-label="Page actions">
+      {search.enabled && <SiteSearch search={search} />}
+      <button
+        class="icon-button theme-toggle"
+        type="button"
+        data-theme-toggle
+        aria-label="Switch theme"
+      >
+        <Moon class="theme-icon-moon" size={18} stroke-width={1.9} />
+        <Sun class="theme-icon-sun" size={18} stroke-width={1.9} />
+      </button>
+      {
+        shouldShowTocAction && (
+          <button
+            class="icon-button toc-toggle"
+            type="button"
+            aria-label={ui.toc.open}
+            aria-expanded="false"
+            aria-controls="mobile-toc-panel"
+            data-toc-toggle
+          >
+            <ListTree size={19} stroke-width={1.9} />
+          </button>
+        )
+      }
+      <button
+        class="icon-button menu-toggle"
+        type="button"
+        aria-label="Open navigation menu"
+        aria-expanded="false"
+        aria-controls="mobile-nav-panel"
+        data-menu-toggle
+      >
+        <Menu class="menu-open-icon" size={20} stroke-width={1.9} />
+        <X class="menu-close-icon" size={20} stroke-width={1.9} />
+      </button>
+    </div>
+
+    <nav
+      class="mobile-panel"
+      id="mobile-nav-panel"
+      aria-label="Mobile navigation"
+      data-mobile-panel
+    >
+      {
+        links.map((link) => (
+          <a
+            class:list={['mobile-link', { active: isActive(link.href) }]}
+            href={withBase(link.href)}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    {
+      shouldShowTocAction && (
+        <nav
+          class="mobile-toc-panel"
+          id="mobile-toc-panel"
+          aria-label={ui.toc.title}
+          data-mobile-toc-panel
+          data-toc-root
+          data-toc-scroll
+        >
+          <strong>{ui.toc.title}</strong>
+          <TocTree items={tocItems} idPrefix="nav-toc" navLink />
+        </nav>
+      )
+    }
+  </div>
+</header>
+
+<script>
+  const initHavemoonNav = () => {
+    for (const root of document.querySelectorAll<HTMLElement>('[data-nav-root]')) {
+      if (root.dataset.ready === 'true') continue;
+      root.dataset.ready = 'true';
+
+      const menuToggle = root.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+      const menuPanel = root.querySelector<HTMLElement>('[data-mobile-panel]');
+      const tocToggle = root.querySelector<HTMLButtonElement>('[data-toc-toggle]');
+      const tocPanel = root.querySelector<HTMLElement>('[data-mobile-toc-panel]');
+
+      const setMenu = (open: boolean) => {
+        root.dataset.menuOpen = open ? 'true' : 'false';
+        menuToggle?.setAttribute('aria-expanded', String(open));
+        menuToggle?.setAttribute(
+          'aria-label',
+          open ? 'Close navigation menu' : 'Open navigation menu',
+        );
+      };
+
+      const setToc = (open: boolean) => {
+        root.dataset.tocOpen = open ? 'true' : 'false';
+        tocToggle?.setAttribute('aria-expanded', String(open));
+      };
+
+      menuToggle?.addEventListener('click', () => {
+        const open = root.dataset.menuOpen !== 'true';
+        setMenu(open);
+        if (open) setToc(false);
+      });
+
+      tocToggle?.addEventListener('click', () => {
+        const open = root.dataset.tocOpen !== 'true';
+        setToc(open);
+        if (open) setMenu(false);
+      });
+
+      menuPanel?.addEventListener('click', () => setMenu(false));
+      tocPanel?.addEventListener('click', () => setToc(false));
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          setMenu(false);
+          setToc(false);
+        }
+      });
+      document.addEventListener('click', (event) => {
+        if (!root.contains(event.target as Node)) {
+          setMenu(false);
+          setToc(false);
+        }
+      });
+    }
+  };
+
+  initHavemoonNav();
+  document.addEventListener('astro:page-load', initHavemoonNav);
+</script>
+
+<style>
+  .blog-top-nav {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 80;
+    min-height: 64px;
+    border-bottom: 1px solid var(--hm-header-border);
+    background: var(--hm-header);
+  }
+
+  .nav-shell {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(170px, 1fr) auto minmax(170px, 1fr);
+    align-items: stretch;
+    width: min(100%, var(--hm-shell));
+    min-height: 63px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 10px;
+    color: var(--hm-header-text);
+    font-size: 1rem;
+    font-weight: 650;
+    text-decoration: none;
+  }
+
+  .brand:hover {
+    color: #ffffff;
+  }
+
+  .brand img {
+    width: 42px;
+    height: auto;
+    border-radius: 0;
+  }
+
+  .desktop-links {
+    display: flex;
+    align-items: stretch;
+  }
+
+  .nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 14px;
+    color: var(--hm-header-muted);
+    font-size: 0.86rem;
+    font-weight: 550;
+    text-decoration: none;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--hm-header-text);
+  }
+
+  .nav-link.active::after {
+    position: absolute;
+    right: 12px;
+    bottom: -1px;
+    left: 12px;
+    height: 2px;
+    background: #58a6ff;
+    content: '';
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    justify-self: end;
+    gap: 7px;
+  }
+
+  .icon-button {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid var(--hm-header-border);
+    border-radius: 6px;
+    background: #161b22;
+    color: var(--hm-header-text);
+    cursor: pointer;
+  }
+
+  .icon-button:hover {
+    border-color: #6e7681;
+    background: #21262d;
+  }
+
+  .menu-toggle,
+  .toc-toggle,
+  .mobile-panel,
+  .mobile-toc-panel,
+  .menu-close-icon {
+    display: none;
+  }
+
+  :global(.blog-top-nav .site-search-trigger) {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--hm-header-border);
+    border-radius: 6px;
+    background: #161b22;
+    color: var(--hm-header-text);
+  }
+
+  :global(.blog-top-nav .site-search-trigger:hover),
+  :global(.blog-top-nav .site-search-trigger:focus-visible) {
+    border-color: #6e7681;
+    background: #21262d;
+    color: #58a6ff;
+  }
+
+  @media (max-width: 920px) {
+    .nav-shell {
+      grid-template-columns: minmax(0, 1fr) auto;
+      min-height: 59px;
+      padding: 0 20px;
+    }
+
+    .blog-top-nav {
+      min-height: 60px;
+    }
+
+    .desktop-links {
+      display: none;
+    }
+
+    .brand img {
+      width: 38px;
+    }
+
+    .menu-toggle,
+    .toc-toggle {
+      display: inline-grid;
+    }
+
+    .blog-top-nav[data-menu-open='true'] .menu-open-icon {
+      display: none;
+    }
+
+    .blog-top-nav[data-menu-open='true'] .menu-close-icon {
+      display: block;
+    }
+
+    .mobile-panel,
+    .mobile-toc-panel {
+      position: absolute;
+      top: calc(100% + 1px);
+      right: 20px;
+      left: 20px;
+      max-height: calc(100vh - 84px);
+      overflow: auto;
+      border: 1px solid var(--hm-header-border);
+      border-top: 0;
+      border-radius: 0 0 6px 6px;
+      background: var(--hm-header);
+      box-shadow: 0 10px 22px rgba(1, 4, 9, 0.24);
+    }
+
+    .mobile-panel {
+      padding: 8px;
+    }
+
+    .mobile-toc-panel {
+      padding: 16px;
+      color: var(--hm-header-muted);
+    }
+
+    .mobile-toc-panel strong {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--hm-header-text);
+      font-size: 0.78rem;
+    }
+
+    .blog-top-nav[data-menu-open='true'] .mobile-panel,
+    .blog-top-nav[data-toc-open='true'] .mobile-toc-panel {
+      display: grid;
+    }
+
+    .mobile-link {
+      padding: 11px 12px;
+      border-radius: 4px;
+      color: var(--hm-header-muted);
+      font-size: 0.92rem;
+      font-weight: 550;
+      text-decoration: none;
+    }
+
+    .mobile-link:hover,
+    .mobile-link.active {
+      background: #161b22;
+      color: var(--hm-header-text);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .brand span {
+      font-size: 0.94rem;
+    }
+
+    .theme-toggle {
+      display: none;
+    }
+
+    .nav-actions {
+      gap: 5px;
+    }
+  }
+</style>

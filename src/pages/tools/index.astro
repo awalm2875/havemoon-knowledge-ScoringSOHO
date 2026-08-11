@@ -1,0 +1,134 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { practicalTools } from '../../data/knowledge';
+import { getSiteConfig } from '../../data/site';
+
+const { site } = await getSiteConfig();
+const description = 'Free browser-based calculators and checklists for China sourcing decisions.';
+---
+
+<BaseLayout title={`Buyer Tools | ${site.title}`} description={description}>
+  <main class="tools-index" data-pagefind-body>
+    <header>
+      <p><a href="/">havemoon</a> / tools</p>
+      <h1>Buyer tools</h1>
+      <span
+        >{description} Your entries are processed locally in the page and are not submitted to Havemoon.</span
+      >
+    </header>
+    <section aria-label="Available buyer tools">
+      {
+        practicalTools.map((tool, index) => (
+          <article>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <div>
+              <small>{tool.status}</small>
+              <h2>
+                <a href={tool.href}>{tool.title}</a>
+              </h2>
+              <p>{tool.description}</p>
+            </div>
+            <a href={tool.href} aria-label={`Open ${tool.title}`}>
+              Open tool →
+            </a>
+          </article>
+        ))
+      }
+    </section>
+    <aside>
+      These tools support early-stage planning and comparison. Save the assumptions used in a real
+      purchase and verify regulatory, customs, tax, and contractual decisions with current
+      authoritative sources or qualified professionals.
+    </aside>
+  </main>
+</BaseLayout>
+
+<style>
+  .tools-index {
+    width: min(100%, 980px);
+    margin: 0 auto;
+    padding: 104px 32px 72px;
+  }
+  header {
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--hm-border);
+  }
+  header > p {
+    margin: 0 0 18px;
+    color: var(--hm-text-faint);
+    font: 0.8rem var(--hm-font-mono);
+  }
+  header > p a {
+    text-decoration: none;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(2.1rem, 4vw, 2.8rem);
+  }
+  header > span {
+    display: block;
+    max-width: 720px;
+    margin-top: 11px;
+    color: var(--hm-text-secondary);
+  }
+  section {
+    margin-top: 30px;
+    border-top: 1px solid var(--hm-border);
+  }
+  article {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr) max-content;
+    gap: 14px;
+    align-items: start;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--hm-border);
+  }
+  article > span {
+    padding-top: 4px;
+    color: var(--hm-text-faint);
+    font: 0.72rem var(--hm-font-mono);
+  }
+  article small {
+    color: var(--hm-mark);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  article h2 {
+    margin: 2px 0 0;
+    font-size: 1.1rem;
+  }
+  article h2 a,
+  article > a {
+    text-decoration: none;
+  }
+  article p {
+    margin: 6px 0 0;
+    color: var(--hm-text-secondary);
+    font-size: 0.86rem;
+  }
+  article > a {
+    padding-top: 20px;
+    font-size: 0.78rem;
+  }
+  aside {
+    margin-top: 28px;
+    padding: 14px 16px;
+    border-left: 4px solid var(--hm-border-strong);
+    background: var(--hm-muted);
+    color: var(--hm-text-secondary);
+    font-size: 0.78rem;
+  }
+  @media (max-width: 680px) {
+    .tools-index {
+      padding: 84px 20px 48px;
+    }
+    article {
+      grid-template-columns: 28px minmax(0, 1fr);
+    }
+    article > a {
+      grid-column: 2;
+      padding-top: 0;
+    }
+  }
+</style>

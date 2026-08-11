@@ -1,0 +1,97 @@
+---
+import { getCollection } from 'astro:content';
+import NavigationCard from '../components/cards/NavigationCard.astro';
+import ProfileCard from '../components/cards/ProfileCard.astro';
+import HomeKnowledgeBase from '../components/home/HomeKnowledgeBase.astro';
+import DashboardFlow from '../components/layout/DashboardFlow.astro';
+import BlogHeatmap from '../components/widgets/BlogHeatmap.astro';
+import { getSiteConfig } from '../data/site';
+import { practicalTools } from '../data/knowledge';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { sortBlogPostsForArchive } from '../utils/content-dates';
+
+const { home, profile, site } = await getSiteConfig();
+const posts = sortBlogPostsForArchive(await getCollection('blog', ({ data }) => !data.draft));
+const resources = sortBlogPostsForArchive(
+  (await getCollection('projects')).filter(({ id, data }) => id !== 'index' && !data.draft),
+);
+---
+
+<BaseLayout title={site.pageTitle} description={site.pageDescription}>
+  <DashboardFlow>
+    <Fragment slot="profile">
+      <ProfileCard
+        profile={profile}
+        guideCount={posts.length}
+        resourceCount={resources.length}
+        toolCount={practicalTools.length}
+      />
+    </Fragment>
+
+    <Fragment slot="navigation">
+      <NavigationCard items={home.navigation} />
+    </Fragment>
+
+    <Fragment slot="connect">
+      <section class="mobile-rail-activity" aria-labelledby="mobile-activity-heading">
+        <header class="mobile-activity-header">
+          <h2 id="mobile-activity-heading">Publication activity</h2>
+          <a href="/activity/">Full activity</a>
+        </header>
+        <BlogHeatmap
+          weeks={home.latest.heatmapWeeks}
+          showLatest={false}
+          excludeDraft={true}
+          compact={true}
+        />
+      </section>
+    </Fragment>
+
+    <Fragment slot="content">
+      <HomeKnowledgeBase
+        posts={posts}
+        resources={resources}
+        heatmapWeeks={home.latest.heatmapWeeks}
+      />
+    </Fragment>
+  </DashboardFlow>
+</BaseLayout>
+
+<style>
+  .mobile-rail-activity {
+    display: none;
+  }
+
+  @media (max-width: 900px) {
+    .mobile-rail-activity {
+      display: grid;
+      gap: 12px;
+      padding: 2px 0 20px;
+      border-bottom: 1px solid var(--hm-border);
+    }
+
+    .mobile-activity-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .mobile-activity-header h2 {
+      margin: 0;
+      color: var(--hm-text);
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    .mobile-activity-header a {
+      color: var(--hm-link);
+      font-size: 0.78rem;
+      text-decoration: none;
+    }
+
+    .mobile-activity-header a:hover {
+      text-decoration: underline;
+    }
+  }
+</style>
