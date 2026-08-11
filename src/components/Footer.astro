@@ -19,6 +19,7 @@ function withBase(href: string) {
     </div>
     <nav aria-label="Trust and policy pages">
       {trustLinks.map((link) => <a href={withBase(link.href)}>{link.label}</a>)}
+      <a href="https://havemoon.com/" target="_blank" rel="noopener">Official site</a>
       <a href={withBase('/rss.xml')}>RSS</a>
     </nav>
     <small>© {year} Havemoon. General educational information, not legal or customs advice.</small>

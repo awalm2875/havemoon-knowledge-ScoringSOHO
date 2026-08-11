@@ -20,6 +20,8 @@ const {
 const { site, fonts } = await getSiteConfig();
 const fallbackImage = '/images/brand/havemoon-mark-transparent-blue.png';
 const siteUrl = Astro.site?.toString() ?? site.url;
+const officialSiteUrl = 'https://havemoon.com/';
+const repositoryUrl = 'https://github.com/awalm2875/havemoon-knowledge-ScoringSOHO';
 const structuredData = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -30,6 +32,15 @@ const structuredData = {
       url: siteUrl,
       logo: new URL('/images/brand/havemoon-mark-transparent-blue.png', siteUrl).toString(),
       description: site.description,
+      email: 'contact@havemoon.com',
+      sameAs: [officialSiteUrl, repositoryUrl],
+      contactPoint: {
+        '@type': 'ContactPoint',
+        email: 'contact@havemoon.com',
+        contactType: 'editorial and privacy inquiries',
+        areaServed: 'Worldwide',
+        availableLanguage: ['English'],
+      },
     },
     {
       '@type': 'WebSite',
