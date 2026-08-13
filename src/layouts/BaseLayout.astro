@@ -12,9 +12,10 @@ interface Props {
   title: string;
   description: string;
   robots?: string;
+  enableAdsense?: boolean;
 }
 
-const { title, description, robots } = Astro.props;
+const { title, description, robots, enableAdsense = true } = Astro.props;
 const siteConfig = await getSiteConfig();
 const palette = siteConfig.theme.palette;
 const htmlLang = getHtmlLang(siteConfig);
@@ -22,7 +23,12 @@ const htmlLang = getHtmlLang(siteConfig);
 
 <ThemeBaseLayout htmlLang={htmlLang} palette={palette}>
   <Fragment slot="head">
-    <BaseHead title={title} description={description} robots={robots} />
+    <BaseHead
+      title={title}
+      description={description}
+      robots={robots}
+      enableAdsense={enableAdsense}
+    />
   </Fragment>
   <Fragment slot="navigation">
     <BlogTopNav />
