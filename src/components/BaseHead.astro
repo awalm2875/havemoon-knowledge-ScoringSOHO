@@ -63,6 +63,59 @@ const structuredData = {
   site={site}
   fonts={fonts}
 />
+<script is:inline>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    wait_for_update: 500,
+    region: [
+      'AT',
+      'BE',
+      'BG',
+      'CH',
+      'CY',
+      'CZ',
+      'DE',
+      'DK',
+      'EE',
+      'ES',
+      'FI',
+      'FR',
+      'GB',
+      'GR',
+      'HR',
+      'HU',
+      'IE',
+      'IS',
+      'IT',
+      'LI',
+      'LT',
+      'LU',
+      'LV',
+      'MT',
+      'NL',
+      'NO',
+      'PL',
+      'PT',
+      'RO',
+      'SE',
+      'SI',
+      'SK',
+    ],
+  });
+</script>
+<script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-1V3R0GB5ZJ"></script>
+<script is:inline>
+  gtag('js', new Date());
+  gtag('config', 'G-1V3R0GB5ZJ');
+</script>
 <script
   is:inline
   async
