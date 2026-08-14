@@ -113,7 +113,18 @@ export default defineConfig({
     ...astroPluginConfig.integrations,
     mdx(),
     sitemap({
-      filter: (page) => !new URL(page).pathname.startsWith('/tags/'),
+      filter: (page) => {
+        const pathname = new URL(page).pathname;
+
+        return (
+          !pathname.startsWith('/tags/') &&
+          pathname !== '/blog/tags/' &&
+          pathname !== '/blog/archives/' &&
+          pathname !== '/blog/series/' &&
+          pathname !== '/blog/categories/' &&
+          !pathname.startsWith('/blog/page/')
+        );
+      },
     }),
     stripFrameworkGenerator(),
   ],

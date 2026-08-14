@@ -55,6 +55,8 @@ const { page, postOffset } = Astro.props;
     <BaseHead
       title={`${pageMeta.title} | Page ${page.currentPage} | ${site.title}`}
       description={pageMeta.subtitle}
+      robots="noindex, follow"
+      enableAdsense={false}
     />
     <style>
       main {

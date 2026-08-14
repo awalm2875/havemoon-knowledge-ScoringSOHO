@@ -53,7 +53,12 @@ function getTagWeight(count: number) {
 <!doctype html>
 <html lang={ui.locale} data-palette={palette}>
   <head>
-    <BaseHead title={`${pageTitle} | ${site.title}`} description={pageNote} />
+    <BaseHead
+      title={`${pageTitle} | ${site.title}`}
+      description={pageNote}
+      robots="noindex, follow"
+      enableAdsense={false}
+    />
     <style>
       main {
         width: min(100%, var(--layout-shell-width));

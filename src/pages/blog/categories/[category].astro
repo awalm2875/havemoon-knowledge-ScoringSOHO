@@ -52,7 +52,11 @@ const categoryName =
 <!doctype html>
 <html lang={ui.locale} data-palette={palette}>
   <head>
-    <BaseHead title={`${categoryName} | ${site.title}`} description={site.description} />
+    <BaseHead
+      title={`${categoryName} | ${site.title}`}
+      description={site.description}
+      enableAdsense={false}
+    />
     <style>
       main {
         width: min(100%, var(--layout-shell-width));
